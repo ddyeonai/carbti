@@ -472,12 +472,19 @@ function restart() {
   show('main');
 }
 
+var SITE_URL = "https://ddyeonai.github.io/carbti";
+
 function shareResult() {
   var name = document.getElementById('rName').textContent;
+  var text = '나의 운전 유형은 "'+name+'"입니다!\n당신의 운전 유형은 무엇인가요?\n👇 지금 바로 확인해보세요\n'+SITE_URL;
   if (navigator.share) {
-    navigator.share({title:'TS CARBTI 결과', text:'나의 운전 유형은 "'+name+'"입니다! 당신은?'});
+    navigator.share({
+      title:'TS CARBTI - 나의 운전 유형은?',
+      text:text,
+      url:SITE_URL
+    });
   } else {
-    alert('나의 운전 유형: '+name+'\n\nTS CARBTI 테스트로 당신의 운전 유형을 알아보세요!');
+    alert(text);
   }
 }
 
