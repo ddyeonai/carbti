@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TS CARBTI - 운전자 유형 테스트</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI',sans-serif; background:#f0f4ff; min-height:100vh; color:#222; }
+  .screen { display:none; min-height:100vh; }
+  .screen.active { display:flex; flex-direction:column; }
+
+  #main { background:linear-gradient(135deg,#003087 0%,#0057c2 60%,#0096ff 100%); align-items:center; justify-content:center; text-align:center; padding:40px 20px; }
+  .logo-badge { background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.4); border-radius:50px; padding:8px 22px; display:inline-block; color:#fff; font-size:13px; letter-spacing:2px; margin-bottom:24px; }
+  .main-title { font-size:52px; font-weight:900; letter-spacing:-1px; margin-bottom:8px; }
+  .ts-t { color:#e8380d; }
+  .ts-s { color:#7dd3fc; }
+  .ts-carbti { color:#fff; }
+  .main-sub { font-size:18px; color:rgba(255,255,255,0.85); margin-bottom:8px; }
+  .main-desc { font-size:14px; color:rgba(255,255,255,0.65); margin-bottom:28px; line-height:1.7; }
+
+  .intake-box { background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); border-radius:20px; padding:24px 20px; width:100%; max-width:520px; margin-bottom:24px; }
+  .intake-label { color:rgba(255,255,255,0.9); font-size:14px; font-weight:700; margin-bottom:12px; text-align:left; }
+  .crs-select { width:100%; background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3); border-radius:10px; padding:13px 16px; color:#fff; font-size:15px; outline:none; cursor:pointer; appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 14px center; padding-right:40px; }
+  .crs-select:focus { border-color:#7dd3fc; }
+  .crs-select option { background:#0057c2; color:#fff; }
+  .edu-input { width:100%; background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3); border-radius:10px; padding:13px 16px; color:#fff; font-size:15px; outline:none; transition:border .2s; margin-top:4px; }
+  .edu-input:focus { border-color:#7dd3fc; background:rgba(255,255,255,0.2); }
+  .intake-error { color:#fca5a5; font-size:13px; margin-top:8px; min-height:18px; text-align:left; }
+
+  .btn-start { background:#fff; color:#0057c2; border:none; border-radius:50px; padding:18px 48px; font-size:17px; font-weight:800; cursor:pointer; box-shadow:0 8px 30px rgba(0,0,0,0.2); transition:all .2s; }
+  .btn-start:hover:not(:disabled) { transform:translateY(-3px); box-shadow:0 12px 40px rgba(0,0,0,0.3); }
+  .btn-start:disabled { background:rgba(255,255,255,0.25); color:rgba(255,255,255,0.55); cursor:not-allowed; font-size:13px; padding:18px 28px; box-shadow:none; }
+  .main-notice { color:rgba(255,255,255,0.5); font-size:12px; margin-top:16px; }
+
+  #test { background:#f0f4ff; }
+  .test-header { background:#003087; padding:16px 24px; display:flex; align-items:center; justify-content:space-between; }
+  .test-header .logo { color:#7dd3fc; font-weight:900; font-size:18px; }
+  .test-header .q-counter { color:rgba(255,255,255,0.7); font-size:13px; }
+  .progress-bar { height:4px; background:rgba(0,48,135,0.15); }
+  .progress-fill { height:100%; background:#0057c2; transition:width .4s; }
+  .test-body { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:32px 20px; }
+  .q-num { color:#0057c2; font-size:12px; font-weight:700; letter-spacing:2px; margin-bottom:12px; }
+  .q-text { font-size:20px; font-weight:700; text-align:center; line-height:1.6; max-width:520px; margin-bottom:36px; color:#111; }
+  .options { display:flex; flex-direction:column; gap:12px; width:100%; max-width:520px; }
+  .opt-btn { background:#fff; border:2px solid #dde4f5; border-radius:14px; padding:16px 20px; font-size:15px; color:#333; cursor:pointer; text-align:left; transition:all .18s; line-height:1.5; }
+  .opt-btn:hover { border-color:#0057c2; background:#eef3ff; color:#0057c2; transform:translateX(4px); }
+  .opt-btn.selected { border-color:#0057c2; background:#0057c2; color:#fff; }
+
+  #loading { background:linear-gradient(135deg,#001a4d 0%,#003087 100%); align-items:center; justify-content:center; text-align:center; padding:40px 20px; }
+  .loading-icon { font-size:64px; margin-bottom:24px; animation:pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.1);opacity:.7} }
+  .loading-title { font-size:24px; font-weight:800; color:#fff; margin-bottom:12px; }
+  .loading-sub { font-size:14px; color:rgba(255,255,255,0.6); margin-bottom:40px; }
+  .loading-steps { display:flex; flex-direction:column; gap:12px; width:100%; max-width:360px; }
+  .step-item { display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.08); border-radius:10px; padding:12px 16px; color:rgba(255,255,255,0.4); font-size:14px; transition:all .5s; }
+  .step-item.done { color:#7dd3fc; background:rgba(125,211,252,0.1); }
+  .step-icon { font-size:18px; }
+  .bar-wrap { width:100%; max-width:360px; background:rgba(255,255,255,0.15); border-radius:50px; height:8px; margin-top:32px; }
+  .bar-inner { height:100%; background:#7dd3fc; border-radius:50px; width:0%; transition:width .5s; }
+
+  #result { background:#f0f4ff; }
+  .result-header { background:#003087; padding:20px 24px; text-align:center; }
+  .result-header .logo { color:#7dd3fc; font-weight:900; font-size:20px; }
+  .result-body { flex:1; padding:32px 20px; max-width:600px; margin:0 auto; width:100%; }
+  .result-tag { background:#0057c2; color:#fff; border-radius:50px; padding:6px 18px; font-size:12px; font-weight:700; display:inline-block; margin-bottom:16px; letter-spacing:1px; }
+  .result-type-name { font-size:32px; font-weight:900; color:#003087; margin-bottom:8px; }
+  .result-emoji { font-size:72px; margin:16px 0; display:block; text-align:center; }
+  .result-card { background:#fff; border-radius:20px; padding:24px; box-shadow:0 4px 20px rgba(0,0,80,0.08); margin-bottom:16px; }
+  .result-card h3 { font-size:14px; color:#0057c2; font-weight:700; letter-spacing:1px; margin-bottom:10px; }
+  .result-card p { font-size:15px; color:#444; line-height:1.8; }
+  .course-list { display:flex; flex-direction:column; gap:10px; }
+  .course-item { display:flex; align-items:flex-start; gap:12px; background:#f0f4ff; border-radius:12px; padding:12px 16px; }
+  .course-num { background:#0057c2; color:#fff; width:24px; height:24px; border-radius:50%; font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+  .traits { display:flex; flex-wrap:wrap; gap:8px; }
+  .trait-chip { background:#eef3ff; color:#0057c2; border-radius:50px; padding:5px 14px; font-size:13px; font-weight:600; }
+  .btn-retry { width:100%; background:#003087; color:#fff; border:none; border-radius:14px; padding:18px; font-size:16px; font-weight:800; cursor:pointer; margin-top:8px; transition:background .2s; }
+  .btn-retry:hover { background:#0057c2; }
+  .btn-share { width:100%; background:#fff; color:#003087; border:2px solid #003087; border-radius:14px; padding:16px; font-size:15px; font-weight:700; cursor:pointer; margin-top:10px; transition:all .2s; }
+  .btn-share:hover { background:#f0f4ff; }
+  @media(max-width:480px) { .main-title{font-size:38px;} .q-text{font-size:17px;} }
+</style>
+</head>
+<body>
+
+<div id="main" class="screen active">
+  <div class="logo-badge">한국교통안전공단 X AI</div>
+  <div class="main-title"><span class="ts-t">T</span><span class="ts-s">S</span> <span class="ts-carbti">CARBTI</span></div>
+  <div class="main-sub">나의 운전 유형을 알아보세요</div>
+  <div class="main-desc">12가지 상황별 질문을 통해<br>AI가 당신의 운전 성향을 정밀 분석합니다</div>
+  <div class="intake-box">
+    <div class="intake-label">수강 중인 교육과정을 선택해주세요</div>
+    <select class="crs-select" id="courseSelect">
+      <option value="" disabled selected>-- 교육과정 선택 --</option>
+      <option>개인택시양수교육</option>
+      <option>신규버스양성교육</option>
+      <option>화물자격교육</option>
+      <option>택시경력자교육</option>
+      <option>일반기본교육</option>
+      <option>일반심화교육</option>
+      <option>버스심화교육</option>
+      <option>화물기본교육</option>
+      <option>택시법정교육</option>
+      <option>버스법정교육</option>
+      <option>버스자격교육</option>
+    </select>
+    <div class="intake-label" style="margin-top:20px;">교육번호를 입력해주세요</div>
+    <input class="edu-input" id="eduNum" type="text" maxlength="20">
+    <div class="intake-error" id="intakeError"></div>
+  </div>
+  <button class="btn-start" id="btnStart" disabled>교육과정과 교육번호를 선택·입력해주세요</button>
+  <div class="main-notice">본 테스트는 교육 목적으로 제작되었습니다</div>
+  <div style="width:100%;max-width:520px;text-align:right;margin-top:12px;color:rgba(255,255,255,0.3);font-size:11px;line-height:1.6;">
+    한국교통안전공단 상주교통안전체험교육센터<br>이도연 교수 제작
+  </div>
+</div>
+
+<div id="test" class="screen">
+  <div class="test-header">
+    <div class="logo">TS CARBTI</div>
+    <div class="q-counter" id="qCounter">1 / 13</div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="test-body">
+    <div class="q-num" id="qNum">Q 01</div>
+    <div class="q-text" id="qText"></div>
+    <div class="options" id="options"></div>
+  </div>
+</div>
+
+<div id="loading" class="screen">
+  <div class="loading-icon">🤖</div>
+  <div class="loading-title">AI 분석 중...</div>
+  <div class="loading-sub">응답 데이터를 처리하고 있습니다</div>
+  <div class="loading-steps">
+    <div class="step-item" id="s1"><div class="step-icon">📊</div> 답변 데이터 수집 완료</div>
+    <div class="step-item" id="s2"><div class="step-icon">🧠</div> 운전 성향 패턴 분석 중</div>
+    <div class="step-item" id="s3"><div class="step-icon">🎯</div> 유형 매칭 알고리즘 실행 중</div>
+    <div class="step-item" id="s4"><div class="step-icon">✅</div> 결과 생성 완료</div>
+  </div>
+  <div class="bar-wrap"><div class="bar-inner" id="barInner"></div></div>
+</div>
+
+<div id="result" class="screen">
+  <div class="result-header"><div class="logo">TS CARBTI</div></div>
+  <div class="result-body">
+    <div style="text-align:center;margin-bottom:24px;">
+      <div class="result-tag" id="rTag"></div>
+      <div class="result-emoji" id="rEmoji"></div>
+      <div class="result-type-name" id="rName"></div>
+      <div id="rImgWrap" style="margin:16px auto 0;max-width:340px;"></div>
+    </div>
+    <div class="result-card"><h3>유형 설명</h3><p id="rDesc"></p></div>
+    <div class="result-card"><h3>주요 특성</h3><div class="traits" id="rTraits"></div></div>
+    <div class="result-card"><h3>추천 체험교육 코스</h3><div class="course-list" id="rCourses"></div></div>
+    <div class="result-card"><h3 id="rVideoTitle">추천 코스 미리보기</h3><div id="videoWrap" style="margin-top:10px;"></div></div>
+    <button class="btn-retry" onclick="restart()">다시 테스트하기</button>
+    <button class="btn-share" onclick="shareResult()">결과 공유하기</button>
+  </div>
+</div>
+
+<script>
+var SHEET_URL = "https://script.google.com/macros/s/AKfycbzTiDKmdBRKwOYl9qJiCHoodC2LeyDhbR43WlgnC0zoD95mgyRE0HqwRLjH-yz6rn8XmA/exec";
+
+var courseInfo = {
+  direction:  { name:"방향전환코스", icon:"🔄", desc:"좁은 공간 진입 후 방향 전환 탈출 체험", video:null },
+  urban:      { name:"시가지코스",   icon:"🏙️", desc:"실제 도심의 헷갈리는 다양한 상황 체험", video:null },
+  curvebrake: { name:"곡선제동코스", icon:"🌧️", desc:"빗길·눈길 감속·제동 미실시 위험성 체험", video:null },
+  linebrake:  { name:"직선제동코스", icon:"⛔",  desc:"긴급제동·사이드브레이크·페달 오조작 방지 체험", video:null },
+  avoid:      { name:"위험회피코스", icon:"⚡",  desc:"돌발 위험 회피 연습 및 공주거리 확인", video:null },
+  bodyctrl:   { name:"차체제어코스", icon:"🌀",  desc:"미끄러운 노면 긴급제동 시 제동거리 체험", video:null },
+  theory:     { name:"이론교육",     icon:"📚",  desc:"교통법규·사고사례·자동차 구조 학습", video:null }
+};
+
+var types = {
+  safe:     { name:"모범운전자형",    emoji:"🏅", tag:"안전 제일주의",  img:"images/모범운전자형.png",
+              desc:"교통법규를 철저히 준수하며 방어운전을 실천하는 모범적인 운전자입니다. 이미 훌륭한 운전 습관을 갖고 계시지만, 다양한 돌발 상황 대응 능력을 더 키워보세요!",
+              traits:["규칙 준수","방어운전","여유로운 판단","타인 배려"], courses:["avoid","urban","direction"] },
+  reckless: { name:"난폭운전형",      emoji:"😤", tag:"충동성 주의",    img:"images/난폭운전형.png",
+              desc:"스트레스나 감정 상태가 운전에 직접적으로 영향을 미치는 유형입니다. 순간적인 판단이 큰 사고로 이어질 수 있어 긴급 상황 대응 훈련이 꼭 필요합니다.",
+              traits:["감정적 운전","경적 남용","급가속·급정거","공격적 주행"], courses:["linebrake","avoid","urban"] },
+  overconf: { name:"과신형",          emoji:"😎", tag:"자만심 경고",    img:"images/과신형.png",
+              desc:"운전 실력에 대한 과도한 자신감으로 위험을 과소평가하는 유형입니다. 실제 사고는 실력 부족보다 방심에서 비롯되는 경우가 많습니다.",
+              traits:["근거 없는 자신감","위험 과소평가","안전수칙 경시","과속"], courses:["curvebrake","bodyctrl","avoid"] },
+  fatigue:  { name:"피로형",          emoji:"😴", tag:"졸음운전 위험",  img:"images/피로형.png",
+              desc:"피로와 졸음 상태에서도 운전을 지속하는 경향이 있는 유형입니다. 졸음운전은 음주운전만큼 위험하며 즉각적인 휴식이 반드시 필요합니다.",
+              traits:["졸음 무시","장거리 과주행","피로 과소평가","집중력 저하"], courses:["avoid","linebrake","urban"] },
+  lawless:  { name:"무법자형",        emoji:"🚨", tag:"법규 위반 주의", img:"images/무법자형.png",
+              desc:"교통법규를 가볍게 여기거나 나만 괜찮겠지 하는 안일한 사고방식을 가진 유형입니다. 법규 위반이 얼마나 심각한 결과를 초래하는지 체험이 필요합니다.",
+              traits:["법규 경시","음주운전 위험","불법 주정차","규칙 무시"], courses:["urban","curvebrake","direction"] },
+  racer:    { name:"레이서형",        emoji:"🏎️", tag:"속도 중독 주의", img:"images/레이서형.png",
+              desc:"속도에 쾌감을 느끼고 고속 주행을 즐기는 유형입니다. 일반 도로와 서킷은 엄연히 다르며 과속은 치명적 사고로 이어질 수 있습니다.",
+              traits:["과속 습관","추월 선호","속도 쾌감","안전거리 미확보"], courses:["bodyctrl","curvebrake","linebrake"] },
+  distract: { name:"안절부절 운전형", emoji:"😵", tag:"주의산만 경고",  img:"images/안절부절형.png",
+              desc:"운전 중 집중력이 부족하고 시선 처리가 불안정한 유형입니다. 전방 주시 태만은 사고의 주요 원인으로, 돌발 상황 대응 능력을 키우는 훈련이 꼭 필요합니다.",
+              traits:["시선 처리 미흡","산만한 운전","전방 주시 태만","집중력 부족"], courses:["avoid","urban","linebrake"] }
+};
+
+var questions = [
+  { q:"신호가 막 바뀌려는 순간, 나는?", opts:[
+    {t:"여유롭게 멈춘다", s:{safe:3}},
+    {t:"조금 아슬아슬하지만 지나간다", s:{reckless:1,racer:1}},
+    {t:"당연히 밟아서 지나간다", s:{reckless:3}},
+    {t:"피곤해서 반응이 늦는 편이다", s:{fatigue:3}}
+  ]},
+  { q:"앞차가 느리게 달리고 있을 때, 나는?", opts:[
+    {t:"충분한 거리를 두고 따라간다", s:{safe:3}},
+    {t:"답답하지만 참고 기다린다", s:{reckless:1}},
+    {t:"계속 경적을 울리거나 바짝 붙는다", s:{reckless:3}},
+    {t:"무리하게 추월을 시도한다", s:{racer:2,reckless:2}}
+  ]},
+  { q:"고속도로에서 나의 평균 속도는?", opts:[
+    {t:"제한속도를 철저히 지킨다", s:{safe:3}},
+    {t:"제한속도보다 10~20km 정도 빠르다", s:{overconf:2,racer:1}},
+    {t:"흐름에 따라 되는 대로 달린다", s:{lawless:3}},
+    {t:"빠를수록 좋다, 최대한 밟는다", s:{racer:3}}
+  ]},
+  { q:"운전 중 졸음이 올 때 나는?", opts:[
+    {t:"즉시 휴게소에 들러 휴식을 취한다", s:{safe:3}},
+    {t:"창문을 열거나 음악을 크게 튼다", s:{fatigue:2}},
+    {t:"괜찮겠지 하고 계속 달린다", s:{fatigue:3}},
+    {t:"에너지 드링크를 마시고 버틴다", s:{fatigue:2}}
+  ]},
+  { q:"비나 눈이 올 때 운전 습관은?", opts:[
+    {t:"속도를 줄이고 안전거리를 넓힌다", s:{safe:3}},
+    {t:"평소보다 조금 조심하는 정도", s:{overconf:2}},
+    {t:"별로 달라지지 않는다, 원래대로 간다", s:{lawless:3}},
+    {t:"오히려 빗길 주행이 스릴 있어서 좋다", s:{racer:3}}
+  ]},
+  { q:"주차 금지 구역에 잠깐 주차해야 할 때?", opts:[
+    {t:"절대 하지 않는다, 다른 곳을 찾는다", s:{safe:3}},
+    {t:"잠깐이니까 괜찮겠지 하고 세운다", s:{lawless:2}},
+    {t:"비상등을 켜고 세워둔다", s:{lawless:2}},
+    {t:"걸리면 벌금 내면 그만이다", s:{lawless:3}}
+  ]},
+  { q:"교차로에서 내 차가 먼저라고 생각할 때?", opts:[
+    {t:"그래도 상황을 보고 천천히 진입한다", s:{safe:3}},
+    {t:"내가 먼저니까 그냥 진행한다", s:{overconf:2}},
+    {t:"상대차가 먼저 가도 크게 신경 안 쓴다", s:{safe:2}},
+    {t:"경적을 울리며 권리를 주장한다", s:{reckless:3}}
+  ]},
+  { q:"나의 운전 실력을 스스로 어떻게 평가하나요?", opts:[
+    {t:"평균 정도라고 생각한다", s:{safe:2}},
+    {t:"주변보다 꽤 잘 하는 편이다", s:{overconf:2}},
+    {t:"나는 사고 날 일 없다, 자신 있다", s:{overconf:3}},
+    {t:"별 생각 없다, 그냥 이동 수단이다", s:{lawless:2,fatigue:1}}
+  ]},
+  { q:"운전 중 스마트폰을 사용하는 빈도는?", opts:[
+    {t:"절대 사용하지 않는다", s:{safe:3}},
+    {t:"신호 대기 중에만 가끔 본다", s:{overconf:1}},
+    {t:"자주 보는 편이다, 급한 연락이 있으면", s:{distract:2,lawless:1}},
+    {t:"거의 항상 한 손에 들고 있다", s:{distract:3,lawless:2}}
+  ]},
+  { q:"음주 후 운전에 대한 나의 생각은?", opts:[
+    {t:"절대 하지 않는다", s:{safe:3}},
+    {t:"조금 마셨다면 괜찮다고 생각한다", s:{lawless:2,overconf:2}},
+    {t:"대리를 부르면 되는데 귀찮은 경우가 있다", s:{lawless:2}},
+    {t:"급하면 한 적 있다", s:{lawless:3}}
+  ]},
+  { q:"장거리 운전 후 피로감이 느껴질 때는?", opts:[
+    {t:"반드시 쉬었다가 출발한다", s:{safe:3}},
+    {t:"목적지가 가까우면 그냥 달린다", s:{fatigue:2}},
+    {t:"커피 한 잔으로 버티는 편이다", s:{fatigue:2}},
+    {t:"피곤함을 잘 느끼지 못하는 편이다", s:{overconf:2}}
+  ]},
+  { q:"운전 중 주변 상황 파악은 잘 되는 편인가요?", opts:[
+    {t:"항상 주변을 잘 살피며 운전한다", s:{safe:3}},
+    {t:"가끔 놓치는 경우가 있다", s:{distract:2}},
+    {t:"자주 놓치고 깜짝 놀라는 편이다", s:{distract:3}},
+    {t:"라디오나 음악에 집중하다 보면 주변이 잘 안 보인다", s:{distract:3,fatigue:1}}
+  ]},
+  { q:"앞차와의 안전거리를 어느 정도 유지하나요?", opts:[
+    {t:"항상 충분한 거리를 유지한다", s:{safe:3}},
+    {t:"도심에선 어쩔 수 없이 좁혀진다", s:{overconf:2}},
+    {t:"잘 모르겠다, 느낌으로 운전한다", s:{distract:2,fatigue:1}},
+    {t:"바짝 붙는 편이다, 그래야 빠르게 간다", s:{racer:2,reckless:2}}
+  ]}
+];
+
+var selectedCourse = '';
+var current = 0;
+var scores = {};
+var resultSaved = false;
+
+function saveResult(name, tag) {
+  var eduNum = document.getElementById('eduNum').value.trim();
+  fetch(SHEET_URL, {
+    method:"POST", mode:"no-cors",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({course:selectedCourse, eduNum:eduNum, result:name, tag:tag})
+  }).catch(function(e){ console.log("저장 오류:",e); });
+}
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function checkReady() {
+  var num = document.getElementById('eduNum').value.trim();
+  var btn = document.getElementById('btnStart');
+  if (selectedCourse && num) {
+    btn.disabled = false;
+    btn.textContent = '테스트 시작하기 →';
+  } else {
+    btn.disabled = true;
+    btn.textContent = '교육과정과 교육번호를 선택·입력해주세요';
+  }
+}
+
+function tryStart() {
+  var num = document.getElementById('eduNum').value.trim();
+  var err = document.getElementById('intakeError');
+  err.textContent = '';
+  if (!selectedCourse) { err.textContent = '⚠️ 교육과정을 선택해주세요.'; return; }
+  if (!num) { err.textContent = '⚠️ 교육번호를 입력해주세요.'; return; }
+  startTest();
+}
+
+function startTest() {
+  current = 0;
+  resultSaved = false;
+  scores = {safe:0,reckless:0,overconf:0,fatigue:0,lawless:0,racer:0,distract:0};
+  show('test');
+  renderQ();
+}
+
+function renderQ() {
+  var q = questions[current];
+  document.getElementById('qCounter').textContent = (current+1)+' / '+questions.length;
+  document.getElementById('qNum').textContent = 'Q '+String(current+1).padStart(2,'0');
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('progressFill').style.width = ((current/questions.length)*100)+'%';
+  var opts = document.getElementById('options');
+  opts.innerHTML = '';
+  q.opts.forEach(function(o){
+    var b = document.createElement('button');
+    b.className = 'opt-btn';
+    b.textContent = o.t;
+    b.onclick = function(){ selectOpt(o.s, b); };
+    opts.appendChild(b);
+  });
+}
+
+function selectOpt(scoreMap, btn) {
+  document.querySelectorAll('.opt-btn').forEach(function(b){ b.classList.remove('selected'); });
+  btn.classList.add('selected');
+  Object.keys(scoreMap).forEach(function(k){ scores[k] += scoreMap[k]; });
+  setTimeout(function(){
+    current++;
+    if (current < questions.length) renderQ();
+    else showLoading();
+  }, 400);
+}
+
+function showLoading() {
+  show('loading');
+  ['s1','s2','s3','s4'].forEach(function(id){ document.getElementById(id).classList.remove('done'); });
+  var bar = document.getElementById('barInner');
+  bar.style.width = '0%';
+  var i = 0;
+  var steps = ['s1','s2','s3','s4'];
+  var iv = setInterval(function(){
+    if (i < steps.length) {
+      document.getElementById(steps[i]).classList.add('done');
+      bar.style.width = ((i+1)*25)+'%';
+      i++;
+    } else {
+      clearInterval(iv);
+      setTimeout(showResult, 600);
+    }
+  }, 700);
+}
+
+function showResult() {
+  var entries = Object.keys(scores).map(function(k){ return [k, scores[k]]; });
+  entries.sort(function(a,b){ return b[1]-a[1]; });
+  var top = entries[0][0];
+  var t = types[top];
+
+  document.getElementById('rTag').textContent = t.tag;
+  document.getElementById('rEmoji').textContent = t.emoji;
+  document.getElementById('rName').textContent = t.name;
+  document.getElementById('rDesc').textContent = t.desc;
+  document.getElementById('rTraits').innerHTML = t.traits.map(function(tr){
+    return '<div class="trait-chip">'+tr+'</div>';
+  }).join('');
+  document.getElementById('rCourses').innerHTML = t.courses.map(function(key,i){
+    var c = courseInfo[key];
+    return '<div class="course-item"><div class="course-num">'+(i+1)+'</div><span><strong>'+c.icon+' '+c.name+'</strong><br><small style="color:#666">'+c.desc+'</small></span></div>';
+  }).join('');
+
+  var imgWrap = document.getElementById('rImgWrap');
+  if (t.img) {
+    imgWrap.innerHTML = '<img src="'+t.img+'" alt="'+t.name+'" style="width:100%;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,80,0.12);">';
+  } else {
+    imgWrap.innerHTML = '<div style="background:#e8eeff;border:2px dashed #99b0e8;border-radius:20px;padding:28px;color:#5570aa;font-size:14px;text-align:center;">이미지 준비 중</div>';
+  }
+
+  var firstCourse = courseInfo[t.courses[0]];
+  document.getElementById('rVideoTitle').textContent = firstCourse.name+' 미리보기';
+  var wrap = document.getElementById('videoWrap');
+  if (firstCourse.video) {
+    wrap.innerHTML = '<video controls style="width:100%;border-radius:12px;" src="'+firstCourse.video+'"></video>';
+  } else {
+    wrap.innerHTML = '<div style="background:#e8eeff;border:2px dashed #99b0e8;border-radius:12px;padding:32px 20px;text-align:center;color:#5570aa;"><div style="font-size:40px;margin-bottom:10px;">🎬</div><div style="font-weight:700;font-size:15px;margin-bottom:6px;">'+firstCourse.name+' 소개 영상</div><div style="font-size:13px;color:#889;">영상 준비 중입니다</div></div>';
+  }
+
+  if (!resultSaved) {
+    resultSaved = true;
+    saveResult(t.name, t.tag);
+  }
+  show('result');
+}
+
+function restart() {
+  selectedCourse = '';
+  document.getElementById('courseSelect').value = '';
+  document.getElementById('eduNum').value = '';
+  document.getElementById('intakeError').textContent = '';
+  checkReady();
+  show('main');
+}
+
+function shareResult() {
+  var name = document.getElementById('rName').textContent;
+  if (navigator.share) {
+    navigator.share({title:'TS CARBTI 결과', text:'나의 운전 유형은 "'+name+'"입니다! 당신은?'});
+  } else {
+    alert('나의 운전 유형: '+name+'\n\nTS CARBTI 테스트로 당신의 운전 유형을 알아보세요!');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  document.getElementById('courseSelect').addEventListener('change', function(){
+    selectedCourse = this.value;
+    checkReady();
+  });
+  document.getElementById('eduNum').addEventListener('input', checkReady);
+  document.getElementById('btnStart').addEventListener('click', tryStart);
+});
+</script>
+</body>
+</html>
