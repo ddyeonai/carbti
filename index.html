@@ -2,14 +2,16 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>TS CARBTI - 운전자 유형 테스트</title>
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'Segoe UI',sans-serif; background:#f0f4ff; min-height:100vh; color:#222; }
-  .screen { display:none; min-height:100vh; }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { height:100%; overflow-x:hidden; }
+  body { font-family:-apple-system, 'Segoe UI', sans-serif; background:#f0f4ff; color:#222; }
+  .screen { display:none; min-height:100vh; min-height:-webkit-fill-available; }
   .screen.active { display:flex; flex-direction:column; }
 
+  /* 메인 */
   #main { background:linear-gradient(135deg,#003087 0%,#0057c2 60%,#0096ff 100%); align-items:center; justify-content:center; text-align:center; padding:40px 20px; }
   .logo-badge { background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.4); border-radius:50px; padding:8px 22px; display:inline-block; color:#fff; font-size:13px; letter-spacing:2px; margin-bottom:24px; }
   .main-title { font-size:52px; font-weight:900; letter-spacing:-1px; margin-bottom:8px; }
@@ -18,35 +20,60 @@
   .ts-carbti { color:#fff; }
   .main-sub { font-size:18px; color:rgba(255,255,255,0.85); margin-bottom:8px; }
   .main-desc { font-size:14px; color:rgba(255,255,255,0.65); margin-bottom:28px; line-height:1.7; }
-
   .intake-box { background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); border-radius:20px; padding:24px 20px; width:100%; max-width:520px; margin-bottom:24px; }
   .intake-label { color:rgba(255,255,255,0.9); font-size:14px; font-weight:700; margin-bottom:12px; text-align:left; }
-  .crs-select { width:100%; background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3); border-radius:10px; padding:13px 16px; color:#fff; font-size:15px; outline:none; cursor:pointer; appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 14px center; padding-right:40px; }
-  .crs-select:focus { border-color:#7dd3fc; }
+  .crs-select { width:100%; background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3); border-radius:10px; padding:13px 16px; color:#fff; font-size:16px; outline:none; cursor:pointer; -webkit-appearance:none; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 14px center; padding-right:40px; }
   .crs-select option { background:#0057c2; color:#fff; }
-  .edu-input { width:100%; background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3); border-radius:10px; padding:13px 16px; color:#fff; font-size:15px; outline:none; transition:border .2s; margin-top:4px; }
-  .edu-input:focus { border-color:#7dd3fc; background:rgba(255,255,255,0.2); }
+  .edu-input { width:100%; background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3); border-radius:10px; padding:13px 16px; color:#fff; font-size:16px; outline:none; margin-top:4px; -webkit-appearance:none; }
+  .edu-input:focus { border-color:#7dd3fc; }
   .intake-error { color:#fca5a5; font-size:13px; margin-top:8px; min-height:18px; text-align:left; }
-
-  .btn-start { background:#fff; color:#0057c2; border:none; border-radius:50px; padding:18px 48px; font-size:17px; font-weight:800; cursor:pointer; box-shadow:0 8px 30px rgba(0,0,0,0.2); transition:all .2s; }
-  .btn-start:hover:not(:disabled) { transform:translateY(-3px); box-shadow:0 12px 40px rgba(0,0,0,0.3); }
-  .btn-start:disabled { background:rgba(255,255,255,0.25); color:rgba(255,255,255,0.55); cursor:not-allowed; font-size:13px; padding:18px 28px; box-shadow:none; }
+  .btn-start { background:#fff; color:#0057c2; border:none; border-radius:50px; padding:18px 48px; font-size:17px; font-weight:800; cursor:pointer; box-shadow:0 8px 30px rgba(0,0,0,0.2); -webkit-appearance:none; }
+  .btn-start:disabled { background:rgba(255,255,255,0.25); color:rgba(255,255,255,0.55); cursor:not-allowed; font-size:13px; padding:18px 24px; box-shadow:none; }
   .main-notice { color:rgba(255,255,255,0.5); font-size:12px; margin-top:16px; }
 
+  /* 테스트 */
   #test { background:#f0f4ff; }
-  .test-header { background:#003087; padding:16px 24px; display:flex; align-items:center; justify-content:space-between; }
+  .test-header { background:#003087; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
   .test-header .logo { color:#7dd3fc; font-weight:900; font-size:18px; }
   .test-header .q-counter { color:rgba(255,255,255,0.7); font-size:13px; }
-  .progress-bar { height:4px; background:rgba(0,48,135,0.15); }
+  .progress-bar { height:4px; background:rgba(0,48,135,0.15); flex-shrink:0; }
   .progress-fill { height:100%; background:#0057c2; transition:width .4s; }
-  .test-body { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:32px 20px; }
-  .q-num { color:#0057c2; font-size:12px; font-weight:700; letter-spacing:2px; margin-bottom:12px; }
-  .q-text { font-size:20px; font-weight:700; text-align:center; line-height:1.6; max-width:520px; margin-bottom:36px; color:#111; }
-  .options { display:flex; flex-direction:column; gap:12px; width:100%; max-width:520px; }
-  .opt-btn { background:#fff; border:2px solid #dde4f5; border-radius:14px; padding:16px 20px; font-size:15px; color:#333; cursor:pointer; text-align:left; transition:all .18s; line-height:1.5; }
-  .opt-btn:hover { border-color:#0057c2; background:#eef3ff; color:#0057c2; transform:translateX(4px); }
+  .test-body {
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:28px 16px 40px;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .q-num { color:#0057c2; font-size:12px; font-weight:700; letter-spacing:2px; margin-bottom:12px; align-self:flex-start; max-width:520px; width:100%; }
+  .q-text { font-size:17px; font-weight:700; text-align:left; line-height:1.7; width:100%; max-width:520px; margin-bottom:24px; color:#111; word-break:keep-all; }
+  .options { display:flex; flex-direction:column; gap:10px; width:100%; max-width:520px; }
+  .opt-btn {
+    background:#fff;
+    border:2px solid #dde4f5;
+    border-radius:14px;
+    padding:15px 18px;
+    font-size:15px;
+    color:#333;
+    cursor:pointer;
+    text-align:left;
+    line-height:1.5;
+    width:100%;
+    -webkit-appearance:none;
+    appearance:none;
+    user-select:none;
+    -webkit-user-select:none;
+    touch-action:manipulation;
+    transition:border-color .15s, background .15s, color .15s;
+    word-break:keep-all;
+  }
+  .opt-btn:focus { outline:none; }
   .opt-btn.selected { border-color:#0057c2; background:#0057c2; color:#fff; }
+  .opt-btn.disabled { pointer-events:none; opacity:0.6; }
 
+  /* 로딩 */
   #loading { background:linear-gradient(135deg,#001a4d 0%,#003087 100%); align-items:center; justify-content:center; text-align:center; padding:40px 20px; }
   .loading-icon { font-size:64px; margin-bottom:24px; animation:pulse 1.5s infinite; }
   @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.1);opacity:.7} }
@@ -59,26 +86,29 @@
   .bar-wrap { width:100%; max-width:360px; background:rgba(255,255,255,0.15); border-radius:50px; height:8px; margin-top:32px; }
   .bar-inner { height:100%; background:#7dd3fc; border-radius:50px; width:0%; transition:width .5s; }
 
+  /* 결과 */
   #result { background:#f0f4ff; }
-  .result-header { background:#003087; padding:20px 24px; text-align:center; }
+  .result-header { background:#003087; padding:20px 24px; text-align:center; flex-shrink:0; }
   .result-header .logo { color:#7dd3fc; font-weight:900; font-size:20px; }
-  .result-body { flex:1; padding:32px 20px; max-width:600px; margin:0 auto; width:100%; }
+  .result-body { flex:1; padding:28px 16px 40px; max-width:600px; margin:0 auto; width:100%; overflow-y:auto; -webkit-overflow-scrolling:touch; }
   .result-tag { background:#0057c2; color:#fff; border-radius:50px; padding:6px 18px; font-size:12px; font-weight:700; display:inline-block; margin-bottom:16px; letter-spacing:1px; }
-  .result-type-name { font-size:32px; font-weight:900; color:#003087; margin-bottom:8px; }
-  .result-emoji { font-size:72px; margin:16px 0; display:block; text-align:center; }
-  .result-card { background:#fff; border-radius:20px; padding:24px; box-shadow:0 4px 20px rgba(0,0,80,0.08); margin-bottom:16px; }
-  .result-card h3 { font-size:14px; color:#0057c2; font-weight:700; letter-spacing:1px; margin-bottom:10px; }
-  .result-card p { font-size:15px; color:#444; line-height:1.8; }
+  .result-type-name { font-size:28px; font-weight:900; color:#003087; margin-bottom:8px; }
+  .result-emoji { font-size:64px; margin:12px 0; display:block; text-align:center; }
+  .result-card { background:#fff; border-radius:20px; padding:20px; box-shadow:0 4px 20px rgba(0,0,80,0.08); margin-bottom:14px; }
+  .result-card h3 { font-size:13px; color:#0057c2; font-weight:700; letter-spacing:1px; margin-bottom:10px; }
+  .result-card p { font-size:14px; color:#444; line-height:1.8; word-break:keep-all; }
   .course-list { display:flex; flex-direction:column; gap:10px; }
-  .course-item { display:flex; align-items:flex-start; gap:12px; background:#f0f4ff; border-radius:12px; padding:12px 16px; }
+  .course-item { display:flex; align-items:flex-start; gap:12px; background:#f0f4ff; border-radius:12px; padding:12px 14px; }
   .course-num { background:#0057c2; color:#fff; width:24px; height:24px; border-radius:50%; font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
   .traits { display:flex; flex-wrap:wrap; gap:8px; }
   .trait-chip { background:#eef3ff; color:#0057c2; border-radius:50px; padding:5px 14px; font-size:13px; font-weight:600; }
-  .btn-retry { width:100%; background:#003087; color:#fff; border:none; border-radius:14px; padding:18px; font-size:16px; font-weight:800; cursor:pointer; margin-top:8px; transition:background .2s; }
-  .btn-retry:hover { background:#0057c2; }
-  .btn-share { width:100%; background:#fff; color:#003087; border:2px solid #003087; border-radius:14px; padding:16px; font-size:15px; font-weight:700; cursor:pointer; margin-top:10px; transition:all .2s; }
-  .btn-share:hover { background:#f0f4ff; }
-  @media(max-width:480px) { .main-title{font-size:38px;} .q-text{font-size:17px;} }
+  .btn-retry { width:100%; background:#003087; color:#fff; border:none; border-radius:14px; padding:16px; font-size:16px; font-weight:800; cursor:pointer; margin-top:8px; -webkit-appearance:none; }
+  .btn-share { width:100%; background:#fff; color:#003087; border:2px solid #003087; border-radius:14px; padding:14px; font-size:15px; font-weight:700; cursor:pointer; margin-top:10px; -webkit-appearance:none; }
+
+  @media(max-width:480px) {
+    .main-title { font-size:40px; }
+    .main-sub { font-size:16px; }
+  }
 </style>
 </head>
 <body>
@@ -87,9 +117,9 @@
   <div class="logo-badge">한국교통안전공단 X AI</div>
   <div class="main-title"><span class="ts-t">T</span><span class="ts-s">S</span> <span class="ts-carbti">CARBTI</span></div>
   <div class="main-sub">나의 운전 유형을 알아보세요</div>
-  <div class="main-desc">12가지 상황별 질문을 통해<br>AI가 당신의 운전 성향을 정밀 분석합니다</div>
+  <div class="main-desc">13가지 상황별 질문을 통해<br>AI가 당신의 운전 성향을 정밀 분석합니다</div>
   <div class="intake-box">
-    <div class="intake-label">수강 중인 교육과정을 선택해주세요</div>
+    <div class="intake-label">📋 수강 중인 교육과정을 선택해주세요</div>
     <select class="crs-select" id="courseSelect">
       <option value="" disabled selected>-- 교육과정 선택 --</option>
       <option>개인택시양수교육</option>
@@ -104,7 +134,7 @@
       <option>버스법정교육</option>
       <option>버스자격교육</option>
     </select>
-    <div class="intake-label" style="margin-top:20px;">교육번호를 입력해주세요</div>
+    <div class="intake-label" style="margin-top:20px;">🔢 교육번호를 입력해주세요</div>
     <input class="edu-input" id="eduNum" type="text" maxlength="20">
     <div class="intake-error" id="intakeError"></div>
   </div>
@@ -144,18 +174,18 @@
 <div id="result" class="screen">
   <div class="result-header"><div class="logo">TS CARBTI</div></div>
   <div class="result-body">
-    <div style="text-align:center;margin-bottom:24px;">
+    <div style="text-align:center;margin-bottom:20px;">
       <div class="result-tag" id="rTag"></div>
       <div class="result-emoji" id="rEmoji"></div>
       <div class="result-type-name" id="rName"></div>
-      <div id="rImgWrap" style="margin:16px auto 0;max-width:340px;"></div>
+      <div id="rImgWrap" style="margin:14px auto 0;max-width:320px;"></div>
     </div>
-    <div class="result-card"><h3>유형 설명</h3><p id="rDesc"></p></div>
-    <div class="result-card"><h3>주요 특성</h3><div class="traits" id="rTraits"></div></div>
-    <div class="result-card"><h3>추천 체험교육 코스</h3><div class="course-list" id="rCourses"></div></div>
-    <div class="result-card"><h3 id="rVideoTitle">추천 코스 미리보기</h3><div id="videoWrap" style="margin-top:10px;"></div></div>
-    <button class="btn-retry" onclick="restart()">다시 테스트하기</button>
-    <button class="btn-share" onclick="shareResult()">결과 공유하기</button>
+    <div class="result-card"><h3>📋 유형 설명</h3><p id="rDesc"></p></div>
+    <div class="result-card"><h3>⚠️ 주요 특성</h3><div class="traits" id="rTraits"></div></div>
+    <div class="result-card"><h3>🏫 추천 체험교육 코스</h3><div class="course-list" id="rCourses"></div></div>
+    <div class="result-card"><h3 id="rVideoTitle">📹 추천 코스 미리보기</h3><div id="videoWrap" style="margin-top:10px;"></div></div>
+    <button class="btn-retry" onclick="restart()">🔄 다시 테스트하기</button>
+    <button class="btn-share" onclick="shareResult()">📤 결과 공유하기</button>
   </div>
 </div>
 
@@ -281,6 +311,7 @@ var selectedCourse = '';
 var current = 0;
 var scores = {};
 var resultSaved = false;
+var canSelect = true;
 
 function saveResult(name, tag) {
   var eduNum = document.getElementById('eduNum').value.trim();
@@ -321,41 +352,59 @@ function tryStart() {
 function startTest() {
   current = 0;
   resultSaved = false;
+  canSelect = true;
   scores = {safe:0,reckless:0,overconf:0,fatigue:0,lawless:0,racer:0,distract:0};
   show('test');
   renderQ();
 }
 
 function renderQ() {
+  canSelect = true;
   var q = questions[current];
   document.getElementById('qCounter').textContent = (current+1)+' / '+questions.length;
   document.getElementById('qNum').textContent = 'Q '+String(current+1).padStart(2,'0');
   document.getElementById('qText').textContent = q.q;
   document.getElementById('progressFill').style.width = ((current/questions.length)*100)+'%';
+
+  // 테스트 바디 스크롤 초기화
+  var tb = document.querySelector('.test-body');
+  if (tb) tb.scrollTop = 0;
+
   var opts = document.getElementById('options');
   opts.innerHTML = '';
   q.opts.forEach(function(o){
     var b = document.createElement('button');
     b.className = 'opt-btn';
     b.textContent = o.t;
-    b.onclick = function(){ selectOpt(o.s, b); };
+    b.addEventListener('touchend', function(e){
+      e.preventDefault();
+      if (!canSelect) return;
+      handleSelect(o.s, b);
+    });
+    b.addEventListener('click', function(e){
+      if (!canSelect) return;
+      handleSelect(o.s, b);
+    });
     opts.appendChild(b);
   });
 }
 
-function selectOpt(scoreMap, btn) {
-  // 모든 버튼 비활성화 (중복 터치 방지)
-  document.querySelectorAll('.opt-btn').forEach(function(b){
-    b.classList.remove('selected');
-    b.style.pointerEvents = 'none';
-  });
+function handleSelect(scoreMap, btn) {
+  if (!canSelect) return;
+  canSelect = false;
+
+  // 선택 표시
+  document.querySelectorAll('.opt-btn').forEach(function(b){ b.classList.remove('selected'); });
   btn.classList.add('selected');
+
+  // 점수 합산
   Object.keys(scoreMap).forEach(function(k){ scores[k] += scoreMap[k]; });
+
   setTimeout(function(){
     current++;
     if (current < questions.length) renderQ();
     else showLoading();
-  }, 400);
+  }, 450);
 }
 
 function showLoading() {
@@ -392,24 +441,20 @@ function showResult() {
   }).join('');
   document.getElementById('rCourses').innerHTML = t.courses.map(function(key,i){
     var c = courseInfo[key];
-    return '<div class="course-item"><div class="course-num">'+(i+1)+'</div><span><strong>'+c.icon+' '+c.name+'</strong><br><small style="color:#666">'+c.desc+'</small></span></div>';
+    return '<div class="course-item"><div class="course-num">'+(i+1)+'</div><span><strong>'+c.icon+' '+c.name+'</strong><br><small style="color:#666;font-size:13px;">'+c.desc+'</small></span></div>';
   }).join('');
 
   var imgWrap = document.getElementById('rImgWrap');
-  if (t.img) {
-    imgWrap.innerHTML = '<img src="'+t.img+'" alt="'+t.name+'" style="width:100%;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,80,0.12);">';
-  } else {
-    imgWrap.innerHTML = '<div style="background:#e8eeff;border:2px dashed #99b0e8;border-radius:20px;padding:28px;color:#5570aa;font-size:14px;text-align:center;">이미지 준비 중</div>';
-  }
+  imgWrap.innerHTML = t.img
+    ? '<img src="'+t.img+'" alt="'+t.name+'" style="width:100%;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,80,0.12);">'
+    : '<div style="background:#e8eeff;border:2px dashed #99b0e8;border-radius:20px;padding:28px;color:#5570aa;font-size:14px;text-align:center;">🖼️ 이미지 준비 중</div>';
 
   var firstCourse = courseInfo[t.courses[0]];
-  document.getElementById('rVideoTitle').textContent = firstCourse.name+' 미리보기';
+  document.getElementById('rVideoTitle').textContent = '📹 '+firstCourse.name+' 미리보기';
   var wrap = document.getElementById('videoWrap');
-  if (firstCourse.video) {
-    wrap.innerHTML = '<video controls style="width:100%;border-radius:12px;" src="'+firstCourse.video+'"></video>';
-  } else {
-    wrap.innerHTML = '<div style="background:#e8eeff;border:2px dashed #99b0e8;border-radius:12px;padding:32px 20px;text-align:center;color:#5570aa;"><div style="font-size:40px;margin-bottom:10px;">🎬</div><div style="font-weight:700;font-size:15px;margin-bottom:6px;">'+firstCourse.name+' 소개 영상</div><div style="font-size:13px;color:#889;">영상 준비 중입니다</div></div>';
-  }
+  wrap.innerHTML = firstCourse.video
+    ? '<video controls playsinline style="width:100%;border-radius:12px;" src="'+firstCourse.video+'"></video>'
+    : '<div style="background:#e8eeff;border:2px dashed #99b0e8;border-radius:12px;padding:32px 20px;text-align:center;color:#5570aa;"><div style="font-size:36px;margin-bottom:8px;">🎬</div><div style="font-weight:700;font-size:14px;margin-bottom:4px;">'+firstCourse.name+' 소개 영상</div><div style="font-size:12px;color:#889;">영상 준비 중입니다</div></div>';
 
   if (!resultSaved) {
     resultSaved = true;
