@@ -344,7 +344,11 @@ function renderQ() {
 }
 
 function selectOpt(scoreMap, btn) {
-  document.querySelectorAll('.opt-btn').forEach(function(b){ b.classList.remove('selected'); });
+  // 모든 버튼 비활성화 (중복 터치 방지)
+  document.querySelectorAll('.opt-btn').forEach(function(b){
+    b.classList.remove('selected');
+    b.style.pointerEvents = 'none';
+  });
   btn.classList.add('selected');
   Object.keys(scoreMap).forEach(function(k){ scores[k] += scoreMap[k]; });
   setTimeout(function(){
