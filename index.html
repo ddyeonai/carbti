@@ -371,8 +371,8 @@
       if (s.hasOwnProperty(k)) scores[k] += s[k];
     }
 
-    // 답변 텍스트 저장
-    answers.push(opt.t);
+    // 답변 번호 저장 (1~4)
+    answers.push(idx + 1);
 
     // 음주운전 차단
     if (opt.blockSafe === true) safeBlocked = true;
