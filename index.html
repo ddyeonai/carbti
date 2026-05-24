@@ -283,9 +283,9 @@ var questions = [
   ]},
   { q:"음주 후 운전에 대한 나의 생각은?", opts:[
     {t:"절대 하지 않는다", s:{safe:3}},
-    {t:"조금 마셨다면 괜찮다고 생각한다", s:{lawless:3,overconf:3}},
-    {t:"대리를 부르면 되는데 귀찮은 경우가 있다", s:{lawless:3}},
-    {t:"급하면 한 적 있다", s:{lawless:4}}
+    {t:"조금 마셨다면 괜찮다고 생각한다", s:{lawless:3,overconf:3}, blockSafe:true},
+    {t:"대리를 부르면 되는데 귀찮은 경우가 있다", s:{lawless:3}, blockSafe:true},
+    {t:"급하면 한 적 있다", s:{lawless:4}, blockSafe:true}
   ]},
   { q:"장거리 운전 후 피로감이 느껴질 때는?", opts:[
     {t:"반드시 쉬었다가 출발한다", s:{safe:3}},
@@ -313,6 +313,7 @@ var scores = {};
 var resultSaved = false;
 var canSelect = true;
 var answers = [];
+var safeBlocked = false;
 
 function saveResult(name, tag) {
   var eduNum = document.getElementById('eduNum').value.trim();
@@ -361,6 +362,7 @@ function startTest() {
   resultSaved = false;
   canSelect = true;
   answers = [];
+  safeBlocked = false;
   scores = {safe:0,reckless:0,overconf:0,fatigue:0,lawless:0,racer:0,distract:0};
   show('test');
   renderQ();
@@ -387,11 +389,11 @@ function renderQ() {
     b.addEventListener('touchend', function(e){
       e.preventDefault();
       if (!canSelect) return;
-      handleSelect(o.s, b, o.t);
+      handleSelect(o.s, b, o.t, o.blockSafe);
     });
     b.addEventListener('click', function(e){
       if (!canSelect) return;
-      handleSelect(o.s, b, o.t);
+      handleSelect(o.s, b, o.t, o.blockSafe);
     });
     opts.appendChild(b);
   });
@@ -435,6 +437,9 @@ function showLoading() {
 }
 
 function showResult() {
+  // 음주운전 응답 시 모범운전자형 제외
+  if (safeBlocked) scores.safe = -1;
+
   var entries = Object.keys(scores).map(function(k){ return [k, scores[k]]; });
   entries.sort(function(a,b){ return b[1]-a[1]; });
   var top = entries[0][0];
