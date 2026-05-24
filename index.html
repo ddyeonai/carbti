@@ -312,13 +312,20 @@ var current = 0;
 var scores = {};
 var resultSaved = false;
 var canSelect = true;
+var answers = [];
 
 function saveResult(name, tag) {
   var eduNum = document.getElementById('eduNum').value.trim();
   fetch(SHEET_URL, {
     method:"POST", mode:"no-cors",
     headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({course:selectedCourse, eduNum:eduNum, result:name, tag:tag})
+    body:JSON.stringify({
+      course: selectedCourse,
+      eduNum: eduNum,
+      answers: answers,
+      result: name,
+      tag: tag
+    })
   }).catch(function(e){ console.log("저장 오류:",e); });
 }
 
@@ -353,6 +360,7 @@ function startTest() {
   current = 0;
   resultSaved = false;
   canSelect = true;
+  answers = [];
   scores = {safe:0,reckless:0,overconf:0,fatigue:0,lawless:0,racer:0,distract:0};
   show('test');
   renderQ();
@@ -379,11 +387,11 @@ function renderQ() {
     b.addEventListener('touchend', function(e){
       e.preventDefault();
       if (!canSelect) return;
-      handleSelect(o.s, b);
+      handleSelect(o.s, b, o.t);
     });
     b.addEventListener('click', function(e){
       if (!canSelect) return;
-      handleSelect(o.s, b);
+      handleSelect(o.s, b, o.t);
     });
     opts.appendChild(b);
   });
