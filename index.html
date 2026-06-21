@@ -169,14 +169,14 @@
     linebrake:  { name:"직선제동코스", desc:"긴급제동·사이드브레이크·페달 오조작 방지 체험", video:"videos/직선제동코스.mp4" },
     avoid:      { name:"위험회피코스", desc:"돌발 위험 회피 연습 및 공주거리 확인", video:"videos/위험회피코스.mp4" },
     bodyctrl:   { name:"차체제어코스", desc:"미끄러운 노면 긴급제동 시 제동거리 체험", video:null },
-    belt:       { name:"벨트/운전자세", desc:"안전벨트의 중요성 및 올바른 운전자세 체험", video:null },
+    belt:       { name:"벨트/운전자세", desc:"안전벨트의 중요성 및 올바른 운전자세 체험", video:"videos/벨트운전자세.mp4" },
     theory:     { name:"이론교육",     desc:"교통법규·사고사례·자동차 구조 학습", video:null }
   };
 
   var types = {
     safe:     { name:"모범운전자형", emoji:"🏅", tag:"안전 제일주의", img:"images/모범운전자형.png",
       desc:"교통법규를 철저히 준수하며 방어운전을 실천하는 모범적인 운전자입니다. 이미 훌륭한 운전 습관을 갖고 계시지만, 다양한 돌발 상황 대응 능력을 더 키워보세요!",
-      traits:["규칙 준수","방어운전","여유로운 판단","타인 배려"], courses:["avoid","urban","belt"] },
+      traits:["규칙 준수","방어운전","여유로운 판단","타인 배려"], courses:["curvebrake","avoid","belt"] },
     reckless: { name:"난폭운전형", emoji:"😤", tag:"충동성 주의", img:"images/난폭운전형.png",
       desc:"스트레스나 감정 상태가 운전에 직접적으로 영향을 미치는 유형입니다. 순간적인 판단이 큰 사고로 이어질 수 있어 긴급 상황 대응 훈련이 꼭 필요합니다.",
       traits:["감정적 운전","경적 남용","급가속·급정거","공격적 주행"], courses:["linebrake","avoid","urban"] },
