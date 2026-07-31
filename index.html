@@ -168,7 +168,7 @@
     curvebrake: { name:"곡선제동코스", desc:"빗길·눈길 감속·제동 미실시 위험성 체험", video:"videos/곡선제동코스.mp4" },
     linebrake:  { name:"직선제동코스", desc:"긴급제동·사이드브레이크·페달 오조작 방지 체험", video:"videos/직선제동코스.mp4" },
     avoid:      { name:"위험회피코스", desc:"돌발 위험 회피 연습 및 공주거리 확인", video:"videos/위험회피코스.mp4" },
-    bodyctrl:   { name:"차체제어코스", desc:"미끄러운 노면 긴급제동 시 제동거리 체험", video:null },
+    slalom:     { name:"슬라롬코스",   desc:"조향 감각과 차폭·차량 감각을 익히는 체험", video:"videos/슬라롬코스.mp4" },
     belt:       { name:"벨트/운전자세", desc:"안전벨트의 중요성 및 올바른 운전자세 체험", video:"videos/벨트운전자세.mp4" },
     theory:     { name:"이론교육",     desc:"교통법규·사고사례·자동차 구조 학습", video:null }
   };
@@ -176,25 +176,25 @@
   var types = {
     safe:     { name:"모범운전자형", emoji:"🏅", tag:"안전 제일주의", img:"images/모범운전자형.png",
       desc:"교통법규를 철저히 준수하며 방어운전을 실천하는 모범적인 운전자입니다. 이미 훌륭한 운전 습관을 갖고 계시지만, 다양한 돌발 상황 대응 능력을 더 키워보세요!",
-      traits:["규칙 준수","방어운전","여유로운 판단","타인 배려"], courses:["curvebrake","avoid","belt"] },
+      traits:["규칙 준수","방어운전","여유로운 판단","타인 배려"], courses:["slalom","linebrake","belt"] },
     reckless: { name:"난폭운전형", emoji:"😤", tag:"충동성 주의", img:"images/난폭운전형.png",
       desc:"스트레스나 감정 상태가 운전에 직접적으로 영향을 미치는 유형입니다. 순간적인 판단이 큰 사고로 이어질 수 있어 긴급 상황 대응 훈련이 꼭 필요합니다.",
-      traits:["감정적 운전","경적 남용","급가속·급정거","공격적 주행"], courses:["linebrake","avoid","urban"] },
+      traits:["감정적 운전","경적 남용","급가속·급정거","공격적 주행"], courses:["avoid","curvebrake","urban"] },
     overconf: { name:"과신형", emoji:"😎", tag:"자만심 경고", img:"images/과신형.png",
       desc:"운전 실력에 대한 과도한 자신감으로 위험을 과소평가하는 유형입니다. 실제 사고는 실력 부족보다 방심에서 비롯되는 경우가 많습니다.",
-      traits:["근거 없는 자신감","위험 과소평가","안전수칙 경시","과속"], courses:["curvebrake","bodyctrl","avoid"] },
+      traits:["근거 없는 자신감","위험 과소평가","안전수칙 경시","과속"], courses:["curvebrake","urban","avoid"] },
     fatigue:  { name:"피로형", emoji:"😴", tag:"졸음운전 위험", img:"images/피로형.png",
       desc:"피로와 졸음 상태에서도 운전을 지속하는 경향이 있는 유형입니다. 졸음운전은 음주운전만큼 위험하며 즉각적인 휴식이 반드시 필요합니다.",
-      traits:["졸음 무시","장거리 과주행","피로 과소평가","집중력 저하"], courses:["avoid","linebrake","belt"] },
+      traits:["졸음 무시","장거리 과주행","피로 과소평가","집중력 저하"], courses:["avoid","belt","linebrake"] },
     lawless:  { name:"무법자형", emoji:"🚨", tag:"법규 위반 주의", img:"images/무법자형.png",
       desc:"교통법규를 가볍게 여기거나 나만 괜찮겠지 하는 안일한 사고방식을 가진 유형입니다. 법규 위반이 얼마나 심각한 결과를 초래하는지 체험이 필요합니다.",
-      traits:["법규 경시","음주운전 위험","불법 주정차","규칙 무시"], courses:["urban","curvebrake","direction"] },
+      traits:["법규 경시","음주운전 위험","불법 주정차","규칙 무시"], courses:["urban","avoid","linebrake"] },
     racer:    { name:"레이서형", emoji:"🏎️", tag:"속도 중독 주의", img:"images/레이서형.png",
       desc:"속도에 쾌감을 느끼고 고속 주행을 즐기는 유형입니다. 일반 도로와 서킷은 엄연히 다르며 과속은 치명적 사고로 이어질 수 있습니다.",
-      traits:["과속 습관","추월 선호","속도 쾌감","안전거리 미확보"], courses:["bodyctrl","curvebrake","linebrake"] },
+      traits:["과속 습관","추월 선호","속도 쾌감","안전거리 미확보"], courses:["curvebrake","slalom","linebrake"] },
     distract: { name:"안절부절 운전형", emoji:"😵", tag:"주의산만 경고", img:"images/안절부절형.png",
       desc:"운전 중 집중력이 부족하고 시선 처리가 불안정한 유형입니다. 전방 주시 태만은 사고의 주요 원인으로, 돌발 상황 대응 능력을 키우는 훈련이 꼭 필요합니다.",
-      traits:["시선 처리 미흡","산만한 운전","전방 주시 태만","집중력 부족"], courses:["avoid","belt","urban"] }
+      traits:["시선 처리 미흡","산만한 운전","전방 주시 태만","집중력 부족"], courses:["avoid","direction","urban"] }
   };
 
   var questions = [
