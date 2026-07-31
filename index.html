@@ -401,6 +401,15 @@
     }, 700);
   }
 
+  function shuffleArray(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
   function showResult() {
     if (safeBlocked) scores.safe = -100;
 
@@ -413,6 +422,7 @@
       }
     }
     var t = types[topKey];
+    var shuffledCourses = shuffleArray(t.courses);
 
     document.getElementById("rTag").textContent = t.tag;
     document.getElementById("rEmoji").textContent = t.emoji;
@@ -426,8 +436,8 @@
     document.getElementById("rTraits").innerHTML = traitsHtml;
 
     var coursesHtml = "";
-    for (var j=0;j<t.courses.length;j++) {
-      var c = courseInfo[t.courses[j]];
+    for (var j=0;j<shuffledCourses.length;j++) {
+      var c = courseInfo[shuffledCourses[j]];
       coursesHtml += '<div class="course-item"><div class="course-num">' + (j+1) +
         '</div><span><strong>' + c.name + '</strong><br><small style="color:#666;font-size:13px;">' +
         c.desc + '</small></span></div>';
@@ -442,7 +452,7 @@
       imgWrap.innerHTML = '<div style="background:#e8eeff;border:2px dashed #99b0e8;border-radius:20px;padding:28px;color:#5570aa;font-size:14px;text-align:center;">🖼️ 이미지 준비 중</div>';
     }
 
-    var firstCourse = courseInfo[t.courses[0]];
+    var firstCourse = courseInfo[shuffledCourses[0]];
     document.getElementById("rVideoTitle").textContent = "📹 " + firstCourse.name + " 미리보기";
     var vWrap = document.getElementById("videoWrap");
     if (firstCourse.video) {
