@@ -105,7 +105,7 @@
     <div class="intake-error" id="intakeError"></div>
   </div>
   <button class="btn-start" id="btnStart" disabled>교육과정과 교육번호를 선택·입력해주세요</button>
-  <div class="main-notice">본 테스트는 교육 목적으로 제작되었습니다 · v4.0</div>
+  <div class="main-notice">본 테스트는 교육 목적으로 제작되었습니다 · v6.0(안정화)</div>
   <div style="width:100%;max-width:520px;text-align:right;margin-top:12px;color:rgba(255,255,255,0.3);font-size:11px;line-height:1.6;">
     한국교통안전공단 상주교통안전체험교육센터<br>이도연 교수 제작
   </div>
@@ -200,59 +200,59 @@
   var questions = [
     { q:"신호등이 막 노란불로 바뀌었다. 교차로까지는 애매한 거리. 나는?", opts:[
       { t:"속도를 줄이며 정지선 앞에 멈춰 선다", s:{safe:3} },
-      { t:"애매하면 흐름을 보고 통과하는 편이다", s:{reckless:2,racer:2} },
-      { t:"멈추기 애매하니 속도를 올려 빠져나간다", s:{reckless:4} },
-      { t:"순간 판단이 늦어 일단 그대로 진입한다", s:{fatigue:4} }
+      { t:"애매하면 흐름을 보고 통과하는 편이다", s:{reckless:2,racer:2}, blockSafe:true },
+      { t:"멈추기 애매하니 속도를 올려 빠져나간다", s:{reckless:4}, blockSafe:true },
+      { t:"순간 판단이 늦어 일단 그대로 진입한다", s:{fatigue:4}, blockSafe:true }
     ]},
     { q:"앞차가 규정 속도보다 느리게 가서 답답하다. 나는?", opts:[
       { t:"내 페이스를 늦추고 거리를 두며 따라간다", s:{safe:3} },
       { t:"답답하지만 표시는 안 내고 따라간다", s:{reckless:2} },
-      { t:"바짝 붙거나 상향등으로 신호를 준다", s:{reckless:4} },
-      { t:"틈이 보이면 차선을 바꿔 추월한다", s:{racer:3,reckless:3} }
+      { t:"바짝 붙거나 상향등으로 신호를 준다", s:{reckless:4}, blockSafe:true },
+      { t:"틈이 보이면 차선을 바꿔 추월한다", s:{racer:3,reckless:3}, blockSafe:true }
     ]},
     { q:"뻥 뚫린 고속도로, 주변에 차도 거의 없다. 내 속도계는?", opts:[
       { t:"한산해도 제한속도 근처를 유지한다", s:{safe:3} },
-      { t:"이럴 땐 제한속도보다 조금 더 밟는다", s:{overconf:3,racer:2} },
+      { t:"이럴 땐 제한속도보다 조금 더 밟는다", s:{overconf:3,racer:2}, blockSafe:true },
       { t:"앞뒤 차 흐름에 맞춰 적당히 달린다", s:{lawless:4} },
-      { t:"뚫린 길은 시원하게 밟아주는 맛이 있다", s:{racer:4} }
+      { t:"뚫린 길은 시원하게 밟아주는 맛이 있다", s:{racer:4}, blockSafe:true }
     ]},
     { q:"장거리 운전 중 눈꺼풀이 무거워진다. 목적지는 30분 거리. 나는?", opts:[
       { t:"무리 말고 가까운 휴게소에 들러 쉰다", s:{safe:3} },
-      { t:"창문 열고 음악 키우며 정신을 차린다", s:{fatigue:3} },
-      { t:"30분 거리면 그냥 끝까지 가는 편이다", s:{fatigue:4} },
-      { t:"카페인 음료로 졸음을 쫓으며 간다", s:{fatigue:3} }
+      { t:"창문 열고 음악 키우며 정신을 차린다", s:{fatigue:3}, blockSafe:true },
+      { t:"30분 거리면 그냥 끝까지 가는 편이다", s:{fatigue:4}, blockSafe:true },
+      { t:"카페인 음료로 졸음을 쫓으며 간다", s:{fatigue:3}, blockSafe:true }
     ]},
     { q:"갑자기 비가 쏟아져 노면이 미끄럽다. 내 운전은?", opts:[
       { t:"속도를 확 줄이고 차간거리를 넓힌다", s:{safe:3} },
       { t:"평소보다 조금 더 신경 쓰며 간다", s:{overconf:3} },
-      { t:"내 운전 스타일은 크게 바뀌지 않는다", s:{lawless:4} },
-      { t:"빗길 주행이 은근 긴장감 있고 재밌다", s:{racer:4} }
+      { t:"내 운전 스타일은 크게 바뀌지 않는다", s:{lawless:4}, blockSafe:true },
+      { t:"빗길 주행이 은근 긴장감 있고 재밌다", s:{racer:4}, blockSafe:true }
     ]},
     { q:"잠깐 볼일 보러 들렀는데 주차할 곳이 마땅치 않다. 나는?", opts:[
       { t:"시간이 걸려도 정식 주차구역을 찾는다", s:{safe:3} },
-      { t:"잠깐인데 괜찮겠지 하고 가까이 세운다", s:{lawless:3} },
-      { t:"비상등 켜두고 금방 다녀온다", s:{lawless:3} },
-      { t:"단속되면 그때 가서 처리하면 된다", s:{lawless:4} }
+      { t:"잠깐인데 괜찮겠지 하고 가까이 세운다", s:{lawless:3}, blockSafe:true },
+      { t:"비상등 켜두고 금방 다녀온다", s:{lawless:3}, blockSafe:true },
+      { t:"단속되면 그때 가서 처리하면 된다", s:{lawless:4}, blockSafe:true }
     ]},
     { q:"좁은 교차로에서 상대 차와 동시에 진입하려는 상황. 나는?", opts:[
       { t:"한 박자 양보하고 상황을 살핀다", s:{safe:3} },
-      { t:"내가 먼저 온 것 같으면 그냥 진입한다", s:{overconf:3} },
+      { t:"내가 먼저 온 것 같으면 그냥 진입한다", s:{overconf:3}, blockSafe:true },
       { t:"누가 먼저 가든 크게 신경 쓰지 않는다", s:{safe:2} },
-      { t:"경적으로 내 차례임을 분명히 알린다", s:{reckless:4} }
+      { t:"경적으로 내 차례임을 분명히 알린다", s:{reckless:4}, blockSafe:true }
     ]},
     { q:"솔직히, 내 운전 실력은 어느 정도라고 생각하나?", opts:[
       { t:"평범한 수준이라 늘 조심하려 한다", s:{safe:2} },
-      { t:"주변 사람들보다는 좀 낫다고 본다", s:{overconf:3} },
-      { t:"웬만해선 사고 안 난다는 자신이 있다", s:{overconf:4} },
-      { t:"실력보다 그냥 익숙해서 타는 편이다", s:{lawless:3,fatigue:2} }
+      { t:"주변 사람들보다는 좀 낫다고 본다", s:{overconf:3}, blockSafe:true },
+      { t:"웬만해선 사고 안 난다는 자신이 있다", s:{overconf:4}, blockSafe:true },
+      { t:"실력보다 그냥 익숙해서 타는 편이다", s:{lawless:3,fatigue:2}, blockSafe:true }
     ]},
     { q:"운전 중 휴대폰 알림이 계속 울린다. 나는?", opts:[
       { t:"도착할 때까지 아예 확인하지 않는다", s:{safe:3} },
-      { t:"신호 대기 중에만 짧게 확인한다", s:{overconf:2} },
-      { t:"중요한 연락 같으면 운전 중에도 본다", s:{distract:3,lawless:2} },
-      { t:"나도 모르게 손이 휴대폰으로 간다", s:{distract:4,lawless:3} }
+      { t:"신호 대기 중에만 짧게 확인한다", s:{overconf:2}, blockSafe:true },
+      { t:"중요한 연락 같으면 운전 중에도 본다", s:{distract:3,lawless:2}, blockSafe:true },
+      { t:"나도 모르게 손이 휴대폰으로 간다", s:{distract:4,lawless:3}, blockSafe:true }
     ]},
-    { q:"가볍게 한두 잔 했다. 차는 가져왔고 집은 멀지 않다. 나는?", opts:[
+        { q:"가볍게 한두 잔 했다. 차는 가져왔고 집은 멀지 않다. 나는?", opts:[
       { t:"무조건 대리나 대중교통을 이용한다", s:{safe:3} },
       { t:"이 정도면 운전해도 괜찮을 것 같다", s:{lawless:3,overconf:3}, blockSafe:true },
       { t:"대리 부르기 번거로워 망설여진다", s:{lawless:3}, blockSafe:true },
@@ -266,23 +266,35 @@
     ]},
     { q:"운전 중 옆 사람과 대화하거나 내비를 조작할 때, 나는?", opts:[
       { t:"전방을 우선하고 곁눈질로만 처리한다", s:{safe:3} },
-      { t:"가끔 앞 상황을 놓칠 때가 있다", s:{distract:3} },
-      { t:"집중하다 깜짝 놀란 적이 종종 있다", s:{distract:4} },
-      { t:"다른 데 신경 쓰면 앞이 잘 안 들어온다", s:{distract:4,fatigue:2} }
+      { t:"가끔 앞 상황을 놓칠 때가 있다", s:{distract:3}, blockSafe:true },
+      { t:"집중하다 깜짝 놀란 적이 종종 있다", s:{distract:4}, blockSafe:true },
+      { t:"다른 데 신경 쓰면 앞이 잘 안 들어온다", s:{distract:4,fatigue:2}, blockSafe:true }
     ]},
     { q:"막히는 도심 도로, 앞차와의 거리. 나는?", opts:[
       { t:"답답해도 안전거리를 지키려 한다", s:{safe:3} },
-      { t:"흐름상 어쩔 수 없이 좁혀지곤 한다", s:{overconf:3} },
-      { t:"거리는 딱히 의식하지 않고 간다", s:{distract:3,fatigue:2} },
-      { t:"바짝 붙어야 끼어들기를 막을 수 있다", s:{racer:3,reckless:3} }
+      { t:"흐름상 어쩔 수 없이 좁혀지곤 한다", s:{overconf:3}, blockSafe:true },
+      { t:"거리는 딱히 의식하지 않고 간다", s:{distract:3,fatigue:2}, blockSafe:true },
+      { t:"바짝 붙어야 끼어들기를 막을 수 있다", s:{racer:3,reckless:3}, blockSafe:true }
     ]},
     { q:"잠깐 가까운 거리만 이동할 때, 안전벨트와 운전자세는?", opts:[
       { t:"거리에 상관없이 벨트와 바른 자세를 갖춘다", s:{safe:3} },
-      { t:"가까운 거리면 가끔 벨트를 생략하기도 한다", s:{overconf:3} },
-      { t:"편한 자세가 우선이라 자세는 신경 안 쓴다", s:{distract:3,fatigue:2} },
-      { t:"답답해서 벨트는 잘 안 매는 편이다", s:{lawless:4} }
+      { t:"가까운 거리면 가끔 벨트를 생략하기도 한다", s:{overconf:3}, blockSafe:true },
+      { t:"편한 자세가 우선이라 자세는 신경 안 쓴다", s:{distract:3,fatigue:2}, blockSafe:true },
+      { t:"답답해서 벨트는 잘 안 매는 편이다", s:{lawless:4}, blockSafe:true }
     ]}
   ];
+
+  // safe(모범운전자) 이론상 최고 점수 자동 계산
+  var SAFE_MAX = 0;
+  for (var qi=0; qi<questions.length; qi++) {
+    var maxSafeForQ = 0;
+    var qopts = questions[qi].opts;
+    for (var oi=0; oi<qopts.length; oi++) {
+      var sv = (qopts[oi].s && qopts[oi].s.safe) ? qopts[oi].s.safe : 0;
+      if (sv > maxSafeForQ) maxSafeForQ = sv;
+    }
+    SAFE_MAX += maxSafeForQ;
+  }
 
   // ===== 상태 =====
   var selectedCourse = "";
@@ -344,12 +356,14 @@
     var box = document.getElementById("options");
     box.innerHTML = "";
 
-    for (var i=0;i<q.opts.length;i++) {
+    var idxOrder = shuffleArray(q.opts.map(function(o, i){ return i; }));
+    for (var i=0;i<idxOrder.length;i++) {
+      var oi = idxOrder[i];
       var btn = document.createElement("button");
       btn.className = "opt-btn";
       btn.type = "button";
-      btn.textContent = q.opts[i].t;
-      btn.setAttribute("data-i", String(i));
+      btn.textContent = q.opts[oi].t;
+      btn.setAttribute("data-i", String(oi));
       btn.onclick = onOptionClick;
       box.appendChild(btn);
     }
