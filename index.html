@@ -112,7 +112,7 @@
     <div class="intake-error" id="intakeError"></div>
   </div>
   <button class="btn-start" id="btnStart" disabled>교육과정과 교육번호를 선택·입력해주세요</button>
-  <div class="main-notice">본 테스트는 교육 목적으로 제작되었습니다 · v7.0</div>
+  <div class="main-notice">본 테스트는 교육 목적으로 제작되었습니다 · v8.1</div>
   <div style="width:100%;max-width:520px;text-align:right;margin-top:12px;color:rgba(255,255,255,0.3);font-size:11px;line-height:1.6;">
     한국교통안전공단 상주교통안전체험교육센터<br>이도연 교수 제작
   </div>
@@ -214,14 +214,14 @@
   var SITE_URL = "https://ddyeonai.github.io/carbti";
 
   var courseInfo = {
-    direction:  { name:"방향전환코스", desc:"좁은 공간 진입 후 방향 전환 탈출 체험", video:null },
-    urban:      { name:"시가지코스",   desc:"실제 도심의 헷갈리는 다양한 상황 체험", video:"videos/시가지코스.mp4" },
-    curvebrake: { name:"곡선제동코스", desc:"빗길·눈길 감속·제동 미실시 위험성 체험", video:"videos/곡선제동코스.mp4" },
-    linebrake:  { name:"직선제동코스", desc:"긴급제동·사이드브레이크·페달 오조작 방지 체험", video:"videos/직선제동코스.mp4" },
-    avoid:      { name:"위험회피코스", desc:"돌발 위험 회피 연습 및 공주거리 확인", video:"videos/위험회피코스.mp4" },
-    slalom:     { name:"슬라롬코스",   desc:"조향 감각과 차폭·차량 감각을 익히는 체험", video:"videos/슬라롬코스.mp4" },
-    belt:       { name:"벨트/운전자세", desc:"안전벨트의 중요성 및 올바른 운전자세 체험", video:"videos/벨트운전자세.mp4" },
-    theory:     { name:"이론교육",     desc:"교통법규·사고사례·자동차 구조 학습", video:null }
+    direction:  { name:"방향전환코스", desc:"좁은 공간 진입 후 방향 전환 탈출 체험", video:null, relate:["distract"] },
+    urban:      { name:"시가지코스",   desc:"실제 도심의 헷갈리는 다양한 상황 체험", video:"videos/시가지코스.mp4", relate:["lawless","overconf"] },
+    curvebrake: { name:"곡선제동코스", desc:"빗길·눈길 감속·제동 미실시 위험성 체험", video:"videos/곡선제동코스.mp4", relate:["overconf","racer"] },
+    linebrake:  { name:"직선제동코스", desc:"긴급제동·사이드브레이크·페달 오조작 방지 체험", video:"videos/직선제동코스.mp4", relate:["reckless","fatigue"] },
+    avoid:      { name:"위험회피코스", desc:"돌발 위험 회피 연습 및 공주거리 확인", video:"videos/위험회피코스.mp4", relate:["distract","reckless"] },
+    slalom:     { name:"슬라롬코스",   desc:"조향 감각과 차폭·차량 감각을 익히는 체험", video:"videos/슬라롬코스.mp4", relate:["racer","safe"] },
+    belt:       { name:"벨트/운전자세", desc:"안전벨트의 중요성 및 올바른 운전자세 체험", video:"videos/벨트운전자세.mp4", relate:["fatigue","distract"] },
+    theory:     { name:"이론교육",     desc:"교통법규·사고사례·자동차 구조 학습", video:null, relate:[] }
   };
 
   var types = {
@@ -500,6 +500,22 @@
     return a;
   }
 
+  function courseScore(courseKey) {
+    var c = courseInfo[courseKey];
+    var total = 0;
+    for (var i=0;i<c.relate.length;i++) {
+      var rk = c.relate[i];
+      if (scores.hasOwnProperty(rk)) total += scores[rk];
+    }
+    return total;
+  }
+
+  function sortCoursesByScore(courseKeys) {
+    var arr = courseKeys.slice();
+    arr.sort(function(a,b){ return courseScore(b) - courseScore(a); });
+    return arr;
+  }
+
   function showResult() {
     if (safeBlocked) scores.safe = -100;
 
@@ -512,7 +528,7 @@
       }
     }
     var t = types[topKey];
-    var shuffledCourses = shuffleArray(t.courses);
+    var shuffledCourses = sortCoursesByScore(t.courses);
 
     document.getElementById("rTag").textContent = t.tag;
     document.getElementById("rEmoji").textContent = t.emoji;
@@ -551,12 +567,13 @@
       vWrap.innerHTML = '<div style="background:#e8eeff;border:2px dashed #99b0e8;border-radius:12px;padding:32px 20px;text-align:center;color:#5570aa;"><div style="font-size:36px;margin-bottom:8px;">🎬</div><div style="font-weight:700;font-size:14px;margin-bottom:4px;">' + firstCourse.name + ' 소개 영상</div><div style="font-size:12px;color:#889;">영상 준비 중입니다</div></div>';
     }
 
-    saveResult(t.name, t.tag);
+    saveResult(t.name, t.tag, shuffledCourses);
     show("result");
   }
 
-  function saveResult(resultName, resultTag) {
+  function saveResult(resultName, resultTag, courseKeys) {
     var eduNum = document.getElementById("eduNum").value.trim();
+    var courseNames = courseKeys.map(function(k){ return courseInfo[k].name; }).join(" > ");
     var payload = {
       course: selectedCourse,
       eduNum: eduNum,
@@ -565,7 +582,8 @@
       gender: genderVal,
       career: careerText,
       result: resultName,
-      tag: resultTag
+      tag: resultTag,
+      recommended: courseNames
     };
     fetch(SHEET_URL, {
       method: "POST",
