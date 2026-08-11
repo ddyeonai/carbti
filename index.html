@@ -74,6 +74,13 @@
   .btn-retry { width:100%; background:#003087; color:#fff; border:none; border-radius:14px; padding:16px; font-size:16px; font-weight:800; cursor:pointer; margin-top:8px; -webkit-appearance:none; }
   .btn-share { width:100%; background:#fff; color:#003087; border:2px solid #003087; border-radius:14px; padding:14px; font-size:15px; font-weight:700; cursor:pointer; margin-top:10px; -webkit-appearance:none; }
 
+  .demo-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .demo-grid-2 { grid-template-columns:repeat(2,1fr); }
+  .demo-btn { background:#fff; border:2px solid #dde4f5; border-radius:12px; padding:12px 8px; font-size:14px; color:#333; cursor:pointer; -webkit-appearance:none; transition:border-color .15s, background .15s, color .15s; }
+  .demo-btn.selected { border-color:#0057c2; background:#0057c2; color:#fff; }
+  .career-input { width:70px; padding:12px; border:2px solid #dde4f5; border-radius:10px; font-size:15px; text-align:center; -webkit-appearance:none; }
+  .career-input:focus { outline:none; border-color:#0057c2; }
+
   @media(max-width:480px) { .main-title { font-size:40px; } .main-sub { font-size:16px; } }
 </style>
 </head>
@@ -105,7 +112,7 @@
     <div class="intake-error" id="intakeError"></div>
   </div>
   <button class="btn-start" id="btnStart" disabled>교육과정과 교육번호를 선택·입력해주세요</button>
-  <div class="main-notice">본 테스트는 교육 목적으로 제작되었습니다 · v6.0(안정화)</div>
+  <div class="main-notice">본 테스트는 교육 목적으로 제작되었습니다 · v7.0</div>
   <div style="width:100%;max-width:520px;text-align:right;margin-top:12px;color:rgba(255,255,255,0.3);font-size:11px;line-height:1.6;">
     한국교통안전공단 상주교통안전체험교육센터<br>이도연 교수 제작
   </div>
@@ -121,6 +128,50 @@
     <div class="q-num" id="qNum">Q 01</div>
     <div class="q-text" id="qText"></div>
     <div class="options" id="options"></div>
+  </div>
+</div>
+
+<div id="demo" class="screen">
+  <div class="test-header">
+    <div class="logo">TS CARBTI</div>
+    <div class="q-counter">추가 정보</div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:100%;"></div></div>
+  <div class="test-body">
+    <div class="q-num">마지막 단계</div>
+    <div class="q-text">정확한 분석을 위해 몇 가지만 더 알려주세요</div>
+
+    <div style="width:100%;max-width:520px;text-align:left;margin-bottom:22px;">
+      <div style="font-size:14px;font-weight:700;color:#0057c2;margin-bottom:10px;">현재 나이는 어떻게 되십니까?</div>
+      <div class="demo-grid" id="ageGrid">
+        <button class="demo-btn" data-val="20대">20대</button>
+        <button class="demo-btn" data-val="30대">30대</button>
+        <button class="demo-btn" data-val="40대">40대</button>
+        <button class="demo-btn" data-val="50대">50대</button>
+        <button class="demo-btn" data-val="60대 이상">60대 이상</button>
+      </div>
+    </div>
+
+    <div style="width:100%;max-width:520px;text-align:left;margin-bottom:22px;">
+      <div style="font-size:14px;font-weight:700;color:#0057c2;margin-bottom:10px;">귀하의 성별은 무엇입니까?</div>
+      <div class="demo-grid demo-grid-2" id="genderGrid">
+        <button class="demo-btn" data-val="남자">남자</button>
+        <button class="demo-btn" data-val="여자">여자</button>
+      </div>
+    </div>
+
+    <div style="width:100%;max-width:520px;text-align:left;margin-bottom:26px;">
+      <div style="font-size:14px;font-weight:700;color:#0057c2;margin-bottom:10px;">귀하의 운전 경력은 어떻게 되십니까?</div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <input type="number" id="careerYear" min="0" max="80" placeholder="0" class="career-input">
+        <span style="font-size:14px;color:#444;">년</span>
+        <input type="number" id="careerMonth" min="0" max="11" placeholder="0" class="career-input">
+        <span style="font-size:14px;color:#444;">개월</span>
+      </div>
+      <div class="intake-error" id="demoError"></div>
+    </div>
+
+    <button class="btn-start" id="btnDemoNext" style="background:#0057c2;color:#fff;box-shadow:0 8px 30px rgba(0,87,194,0.25);">결과 확인하기 →</button>
   </div>
 </div>
 
@@ -303,6 +354,9 @@
   var answers = [];
   var safeBlocked = false;
   var locked = false;
+  var ageVal = "";
+  var genderVal = "";
+  var careerText = "";
 
   function show(id) {
     var arr = document.querySelectorAll(".screen");
@@ -392,8 +446,30 @@
     setTimeout(function(){
       current++;
       if (current < questions.length) renderQ();
-      else runLoading();
+      else showDemo();
     }, 400);
+  }
+
+  function showDemo() {
+    ageVal = "";
+    genderVal = "";
+    document.querySelectorAll(".demo-btn").forEach(function(b){ b.classList.remove("selected"); });
+    document.getElementById("careerYear").value = "";
+    document.getElementById("careerMonth").value = "";
+    document.getElementById("demoError").textContent = "";
+    show("demo");
+  }
+
+  function tryDemoNext() {
+    var err = document.getElementById("demoError");
+    err.textContent = "";
+    if (!ageVal) { err.textContent = "⚠️ 연령대를 선택해주세요."; return; }
+    if (!genderVal) { err.textContent = "⚠️ 성별을 선택해주세요."; return; }
+    var y = document.getElementById("careerYear").value;
+    var m = document.getElementById("careerMonth").value;
+    if (y === "" && m === "") { err.textContent = "⚠️ 운전 경력을 입력해주세요."; return; }
+    careerText = (y || "0") + "년 " + (m || "0") + "개월";
+    runLoading();
   }
 
   function runLoading() {
@@ -485,6 +561,9 @@
       course: selectedCourse,
       eduNum: eduNum,
       answers: answers,
+      age: ageVal,
+      gender: genderVal,
+      career: careerText,
       result: resultName,
       tag: resultTag
     };
@@ -498,6 +577,9 @@
 
   function restart() {
     selectedCourse = "";
+    ageVal = "";
+    genderVal = "";
+    careerText = "";
     document.getElementById("courseSelect").value = "";
     document.getElementById("eduNum").value = "";
     document.getElementById("intakeError").textContent = "";
@@ -524,6 +606,22 @@
     document.getElementById("btnStart").addEventListener("click", tryStart);
     document.getElementById("btnRetry").addEventListener("click", restart);
     document.getElementById("btnShare").addEventListener("click", shareResult);
+
+    document.querySelectorAll("#ageGrid .demo-btn").forEach(function(b){
+      b.addEventListener("click", function(){
+        document.querySelectorAll("#ageGrid .demo-btn").forEach(function(x){ x.classList.remove("selected"); });
+        this.classList.add("selected");
+        ageVal = this.getAttribute("data-val");
+      });
+    });
+    document.querySelectorAll("#genderGrid .demo-btn").forEach(function(b){
+      b.addEventListener("click", function(){
+        document.querySelectorAll("#genderGrid .demo-btn").forEach(function(x){ x.classList.remove("selected"); });
+        this.classList.add("selected");
+        genderVal = this.getAttribute("data-val");
+      });
+    });
+    document.getElementById("btnDemoNext").addEventListener("click", tryDemoNext);
   });
 
 })();
