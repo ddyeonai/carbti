@@ -11,8 +11,11 @@
   .screen { display:none; min-height:100vh; min-height:-webkit-fill-available; }
   .screen.active { display:flex; flex-direction:column; }
 
-  #main { background:linear-gradient(135deg,#003087 0%,#0057c2 60%,#0096ff 100%); align-items:center; justify-content:center; text-align:center; padding:40px 20px; }
-  .logo-badge { background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.4); border-radius:50px; padding:8px 22px; display:inline-block; color:#fff; font-size:13px; letter-spacing:2px; margin-bottom:24px; }
+  #main { background:linear-gradient(135deg,#003087 0%,#0057c2 60%,#0096ff 100%); align-items:center; justify-content:center; text-align:center; padding:40px 20px; position:relative; }
+  .lang-switch { position:absolute; top:16px; right:16px; display:flex; gap:6px; z-index:10; }
+  .lang-btn { background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.35); border-radius:50px; padding:6px 10px; color:#fff; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px; -webkit-appearance:none; }
+  .lang-btn.active { background:#fff; color:#003087; border-color:#fff; }
+  .logo-badge { background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.4); border-radius:50px; padding:8px 22px; display:inline-block; color:#fff; font-size:13px; letter-spacing:2px; margin-bottom:24px; margin-top:20px; }
   .main-title { font-size:52px; font-weight:900; letter-spacing:-1px; margin-bottom:8px; }
   .ts-t { color:#e8380d; }
   .ts-s { color:#7dd3fc; }
@@ -82,40 +85,31 @@
   .btn-retry { width:100%; background:#003087; color:#fff; border:none; border-radius:14px; padding:16px; font-size:16px; font-weight:800; cursor:pointer; margin-top:8px; -webkit-appearance:none; }
   .btn-share { width:100%; background:#fff; color:#003087; border:2px solid #003087; border-radius:14px; padding:14px; font-size:15px; font-weight:700; cursor:pointer; margin-top:10px; -webkit-appearance:none; }
 
-  @media(max-width:480px) { .main-title { font-size:40px; } .main-sub { font-size:16px; } }
+  @media(max-width:480px) { .main-title { font-size:40px; } .main-sub { font-size:16px; } .lang-switch{ top:10px; right:10px; } }
 </style>
 </head>
 <body>
 
 <div id="main" class="screen active">
-  <div class="logo-badge">한국교통안전공단 X AI</div>
+  <div class="lang-switch">
+    <button class="lang-btn active" data-lang="ko">🇰🇷 KR</button>
+    <button class="lang-btn" data-lang="en">🇺🇸 EN</button>
+    <button class="lang-btn" data-lang="zh">🇨🇳 CN</button>
+  </div>
+  <div class="logo-badge" id="txtBadge">한국교통안전공단 X AI</div>
   <div class="main-title"><span class="ts-t">T</span><span class="ts-s">S</span> <span class="ts-carbti">CARBTI</span></div>
-  <div class="main-sub">나의 운전 유형을 알아보세요</div>
-  <div class="main-desc">14가지 상황별 질문을 통해<br>AI가 당신의 운전 성향을 정밀 분석합니다</div>
+  <div class="main-sub" id="txtSub">나의 운전 유형을 알아보세요</div>
+  <div class="main-desc" id="txtDesc">14가지 상황별 질문을 통해<br>AI가 당신의 운전 성향을 정밀 분석합니다</div>
   <div class="intake-box">
-    <div class="intake-label">📋 수강 중인 교육과정을 선택해주세요</div>
-    <select class="crs-select" id="courseSelect">
-      <option value="" disabled selected>-- 교육과정 선택 --</option>
-      <option>개인택시양수교육</option>
-      <option>신규버스양성교육</option>
-      <option>화물자격교육</option>
-      <option>택시경력자교육</option>
-      <option>일반기본교육</option>
-      <option>일반심화교육</option>
-      <option>버스기본교육</option>
-      <option>버스심화교육</option>
-      <option>화물기본교육</option>
-      <option>택시법정교육</option>
-      <option>버스법정교육</option>
-      <option>버스자격교육</option>
-    </select>
-    <div class="intake-label" style="margin-top:20px;">🔢 교육번호를 입력해주세요</div>
+    <div class="intake-label" id="txtCourseLabel">📋 수강 중인 교육과정을 선택해주세요</div>
+    <select class="crs-select" id="courseSelect"></select>
+    <div class="intake-label" id="txtEduLabel" style="margin-top:20px;">🔢 교육번호를 입력해주세요</div>
     <input class="edu-input" id="eduNum" type="text" maxlength="20">
     <div class="intake-error" id="intakeError"></div>
   </div>
-  <button class="btn-start" id="btnStart" disabled>교육과정과 교육번호를 선택·입력해주세요</button>
-  <div class="main-notice">본 테스트는 교육 목적으로 제작되었습니다 · v9.1</div>
-  <div style="width:100%;max-width:520px;text-align:right;margin-top:12px;color:rgba(255,255,255,0.3);font-size:11px;line-height:1.6;">
+  <button class="btn-start" id="btnStart" disabled></button>
+  <div class="main-notice" id="txtNotice">본 테스트는 교육 목적으로 제작되었습니다 · v10.0</div>
+  <div id="txtFooter" style="width:100%;max-width:520px;text-align:right;margin-top:12px;color:rgba(255,255,255,0.3);font-size:11px;line-height:1.6;">
     한국교통안전공단 상주교통안전체험교육센터<br>이도연 교수 제작
   </div>
 </div>
@@ -136,39 +130,39 @@
 <div id="demo" class="screen">
   <div class="test-header">
     <div class="logo">TS CARBTI</div>
-    <div class="q-counter">추가 정보</div>
+    <div class="q-counter" id="txtDemoLabel">추가 정보</div>
   </div>
   <div class="progress-bar"><div class="progress-fill" style="width:100%;"></div></div>
   <div class="test-body">
-    <div class="q-num">마지막 단계</div>
-    <div class="q-text">정확한 분석을 위해 몇 가지만 더 알려주세요</div>
+    <div class="q-num" id="txtDemoStep">마지막 단계</div>
+    <div class="q-text" id="txtDemoIntro">정확한 분석을 위해 몇 가지만 더 알려주세요</div>
 
     <div style="width:100%;max-width:520px;text-align:left;margin-bottom:22px;">
-      <div style="font-size:14px;font-weight:700;color:#0057c2;margin-bottom:10px;">현재 나이는 어떻게 되십니까?</div>
+      <div style="font-size:14px;font-weight:700;color:#0057c2;margin-bottom:10px;" id="txtAgeQ">현재 나이는 어떻게 되십니까?</div>
       <div class="demo-grid" id="ageGrid">
-        <button class="demo-btn" data-val="20대">20대</button>
-        <button class="demo-btn" data-val="30대">30대</button>
-        <button class="demo-btn" data-val="40대">40대</button>
-        <button class="demo-btn" data-val="50대">50대</button>
-        <button class="demo-btn" data-val="60대 이상">60대 이상</button>
+        <button class="demo-btn" data-val="20대" data-idx="0">20대</button>
+        <button class="demo-btn" data-val="30대" data-idx="1">30대</button>
+        <button class="demo-btn" data-val="40대" data-idx="2">40대</button>
+        <button class="demo-btn" data-val="50대" data-idx="3">50대</button>
+        <button class="demo-btn" data-val="60대 이상" data-idx="4">60대 이상</button>
       </div>
     </div>
 
     <div style="width:100%;max-width:520px;text-align:left;margin-bottom:22px;">
-      <div style="font-size:14px;font-weight:700;color:#0057c2;margin-bottom:10px;">귀하의 성별은 무엇입니까?</div>
+      <div style="font-size:14px;font-weight:700;color:#0057c2;margin-bottom:10px;" id="txtGenderQ">귀하의 성별은 무엇입니까?</div>
       <div class="demo-grid demo-grid-2" id="genderGrid">
-        <button class="demo-btn" data-val="남자">남자</button>
-        <button class="demo-btn" data-val="여자">여자</button>
+        <button class="demo-btn" data-val="남자" data-idx="0">남자</button>
+        <button class="demo-btn" data-val="여자" data-idx="1">여자</button>
       </div>
     </div>
 
     <div style="width:100%;max-width:520px;text-align:left;margin-bottom:26px;">
-      <div style="font-size:14px;font-weight:700;color:#0057c2;margin-bottom:10px;">귀하의 운전 경력은 어떻게 되십니까?</div>
+      <div style="font-size:14px;font-weight:700;color:#0057c2;margin-bottom:10px;" id="txtCareerQ">귀하의 운전 경력은 어떻게 되십니까?</div>
       <div style="display:flex;gap:10px;align-items:center;">
         <input type="number" id="careerYear" min="0" max="80" placeholder="0" class="career-input">
-        <span style="font-size:14px;color:#444;">년</span>
+        <span style="font-size:14px;color:#444;" id="txtYearUnit">년</span>
         <input type="number" id="careerMonth" min="0" max="11" placeholder="0" class="career-input">
-        <span style="font-size:14px;color:#444;">개월</span>
+        <span style="font-size:14px;color:#444;" id="txtMonthUnit">개월</span>
       </div>
       <div class="intake-error" id="demoError"></div>
     </div>
@@ -179,13 +173,13 @@
 
 <div id="loading" class="screen">
   <div class="loading-icon">🤖</div>
-  <div class="loading-title">AI 분석 중...</div>
-  <div class="loading-sub">응답 데이터를 처리하고 있습니다</div>
+  <div class="loading-title" id="txtLoadingTitle">AI 분석 중...</div>
+  <div class="loading-sub" id="txtLoadingSub">응답 데이터를 처리하고 있습니다</div>
   <div class="loading-steps">
-    <div class="step-item" id="s1"><div class="step-icon">📊</div> 답변 데이터 수집 완료</div>
-    <div class="step-item" id="s2"><div class="step-icon">🧠</div> 운전 성향 패턴 분석 중</div>
-    <div class="step-item" id="s3"><div class="step-icon">🎯</div> 유형 매칭 알고리즘 실행 중</div>
-    <div class="step-item" id="s4"><div class="step-icon">✅</div> 결과 생성 완료</div>
+    <div class="step-item" id="s1"><div class="step-icon">📊</div> <span id="txtStep1">답변 데이터 수집 완료</span></div>
+    <div class="step-item" id="s2"><div class="step-icon">🧠</div> <span id="txtStep2">운전 성향 패턴 분석 중</span></div>
+    <div class="step-item" id="s3"><div class="step-icon">🎯</div> <span id="txtStep3">유형 매칭 알고리즘 실행 중</span></div>
+    <div class="step-item" id="s4"><div class="step-icon">✅</div> <span id="txtStep4">결과 생성 완료</span></div>
   </div>
   <div class="bar-wrap"><div class="bar-inner" id="barInner"></div></div>
 </div>
@@ -199,9 +193,9 @@
       <div class="result-type-name" id="rName"></div>
       <div id="rImgWrap" style="margin:14px auto 0;max-width:320px;"></div>
     </div>
-    <div class="result-card"><h3>📋 유형 설명</h3><p id="rDesc"></p></div>
-    <div class="result-card"><h3>⚠️ 주요 특성</h3><div class="traits" id="rTraits"></div></div>
-    <div class="result-card"><h3>🏫 추천 체험교육 코스</h3><div class="course-list" id="rCourses"></div></div>
+    <div class="result-card"><h3 id="txtDescHeading">📋 유형 설명</h3><p id="rDesc"></p></div>
+    <div class="result-card"><h3 id="txtTraitsHeading">⚠️ 주요 특성</h3><div class="traits" id="rTraits"></div></div>
+    <div class="result-card"><h3 id="txtCoursesHeading">🏫 추천 체험교육 코스</h3><div class="course-list" id="rCourses"></div></div>
     <div class="result-card"><h3 id="rVideoTitle">📹 추천 코스 미리보기</h3><div id="videoWrap" style="margin-top:10px;"></div></div>
     <button class="btn-retry" id="btnRetry">🔄 다시 테스트하기</button>
     <button class="btn-share" id="btnShare">📤 결과 공유하기</button>
@@ -215,127 +209,224 @@
   var SHEET_URL = "https://script.google.com/macros/s/AKfycbzTiDKmdBRKwOYl9qJiCHoodC2LeyDhbR43WlgnC0zoD95mgyRE0HqwRLjH-yz6rn8XmA/exec";
   var SITE_URL = "https://ddyeonai.github.io/carbti";
 
-  var courseInfo = {
-    direction:  { name:"방향전환코스", desc:"좁은 공간 진입 후 방향 전환 탈출 체험", video:null, relate:["distract"] },
-    urban:      { name:"시가지코스",   desc:"실제 도심의 헷갈리는 다양한 상황 체험", video:"videos/시가지코스.mp4", relate:["lawless","overconf"] },
-    curvebrake: { name:"곡선제동코스", desc:"빗길·눈길 감속·제동 미실시 위험성 체험", video:"videos/곡선제동코스.mp4", relate:["overconf","racer"] },
-    linebrake:  { name:"직선제동코스", desc:"긴급제동·사이드브레이크·페달 오조작 방지 체험", video:"videos/직선제동코스.mp4", relate:["reckless","fatigue"] },
-    avoid:      { name:"위험회피코스", desc:"돌발 위험 회피 연습 및 공주거리 확인", video:"videos/위험회피코스.mp4", relate:["distract","reckless"] },
-    slalom:     { name:"슬라롬코스",   desc:"조향 감각과 차폭·차량 감각을 익히는 체험", video:"videos/슬라롬코스.mp4", relate:["racer","safe"] },
-    belt:       { name:"벨트/운전자세", desc:"안전벨트의 중요성 및 올바른 운전자세 체험", video:"videos/벨트운전자세.mp4", relate:["fatigue","distract"] },
-    theory:     { name:"이론교육",     desc:"교통법규·사고사례·자동차 구조 학습", video:null, relate:[] }
+  // ===== 코스 (언어 무관 데이터: 영상, 연관유형) =====
+  var courseKeys = ["direction","urban","curvebrake","linebrake","avoid","slalom","belt","theory"];
+  var courseVideo = {
+    direction:null, urban:"videos/시가지코스.mp4", curvebrake:"videos/곡선제동코스.mp4",
+    linebrake:"videos/직선제동코스.mp4", avoid:"videos/위험회피코스.mp4", slalom:"videos/슬라롬코스.mp4",
+    belt:"videos/벨트운전자세.mp4", theory:null
+  };
+  var courseRelate = {
+    direction:["distract"], urban:["lawless","overconf"], curvebrake:["overconf","racer"],
+    linebrake:["reckless","fatigue"], avoid:["distract","reckless"], slalom:["racer","safe"],
+    belt:["fatigue","distract"], theory:[]
   };
 
-  var types = {
-    safe:     { name:"모범운전자형", emoji:"🏅", tag:"안전 제일주의", img:"images/모범운전자형.png",
-      desc:"교통법규를 철저히 준수하며 방어운전을 실천하는 모범적인 운전자입니다. 이미 훌륭한 운전 습관을 갖고 계시지만, 다양한 돌발 상황 대응 능력을 더 키워보세요!",
-      traits:["규칙 준수","방어운전","여유로운 판단","타인 배려"], courses:["slalom","linebrake","belt"] },
-    reckless: { name:"난폭운전형", emoji:"😤", tag:"충동성 주의", img:"images/난폭운전형.png",
-      desc:"스트레스나 감정 상태가 운전에 직접적으로 영향을 미치는 유형입니다. 순간적인 판단이 큰 사고로 이어질 수 있어 긴급 상황 대응 훈련이 꼭 필요합니다.",
-      traits:["감정적 운전","경적 남용","급가속·급정거","공격적 주행"], courses:["avoid","curvebrake","urban"] },
-    overconf: { name:"과신형", emoji:"😎", tag:"자만심 경고", img:"images/과신형.png",
-      desc:"운전 실력에 대한 과도한 자신감으로 위험을 과소평가하는 유형입니다. 실제 사고는 실력 부족보다 방심에서 비롯되는 경우가 많습니다.",
-      traits:["근거 없는 자신감","위험 과소평가","안전수칙 경시","과속"], courses:["curvebrake","urban","avoid"] },
-    fatigue:  { name:"피로형", emoji:"😴", tag:"졸음운전 위험", img:"images/피로형.png",
-      desc:"피로와 졸음 상태에서도 운전을 지속하는 경향이 있는 유형입니다. 졸음운전은 음주운전만큼 위험하며 즉각적인 휴식이 반드시 필요합니다.",
-      traits:["졸음 무시","장거리 과주행","피로 과소평가","집중력 저하"], courses:["avoid","belt","linebrake"] },
-    lawless:  { name:"무법자형", emoji:"🚨", tag:"법규 위반 주의", img:"images/무법자형.png",
-      desc:"교통법규를 가볍게 여기거나 나만 괜찮겠지 하는 안일한 사고방식을 가진 유형입니다. 법규 위반이 얼마나 심각한 결과를 초래하는지 체험이 필요합니다.",
-      traits:["법규 경시","음주운전 위험","불법 주정차","규칙 무시"], courses:["urban","avoid","linebrake"] },
-    racer:    { name:"레이서형", emoji:"🏎️", tag:"속도 중독 주의", img:"images/레이서형.png",
-      desc:"속도에 쾌감을 느끼고 고속 주행을 즐기는 유형입니다. 일반 도로와 서킷은 엄연히 다르며 과속은 치명적 사고로 이어질 수 있습니다.",
-      traits:["과속 습관","추월 선호","속도 쾌감","안전거리 미확보"], courses:["curvebrake","slalom","linebrake"] },
-    distract: { name:"안절부절 운전형", emoji:"😵", tag:"주의산만 경고", img:"images/안절부절형.png",
-      desc:"운전 중 집중력이 부족하고 시선 처리가 불안정한 유형입니다. 전방 주시 태만은 사고의 주요 원인으로, 돌발 상황 대응 능력을 키우는 훈련이 꼭 필요합니다.",
-      traits:["시선 처리 미흡","산만한 운전","전방 주시 태만","집중력 부족"], courses:["avoid","direction","urban"] }
+  // ===== 유형 (언어 무관 데이터: 이모지, 이미지, 추천코스, 채점키) =====
+  var typeKeys = ["safe","reckless","overconf","fatigue","lawless","racer","distract"];
+  var typeEmoji = { safe:"🏅", reckless:"😤", overconf:"😎", fatigue:"😴", lawless:"🚨", racer:"🏎️", distract:"😵" };
+  var typeImg = {
+    safe:"images/모범운전자형.png", reckless:"images/난폭운전형.png", overconf:"images/과신형.png",
+    fatigue:"images/피로형.png", lawless:"images/무법자형.png", racer:"images/레이서형.png", distract:"images/안절부절형.png"
+  };
+  var typeCourses = {
+    safe:["slalom","linebrake","belt"], reckless:["avoid","curvebrake","urban"], overconf:["curvebrake","urban","avoid"],
+    fatigue:["avoid","belt","linebrake"], lawless:["urban","avoid","linebrake"], racer:["curvebrake","slalom","linebrake"],
+    distract:["avoid","direction","urban"]
   };
 
+  // ===== 교육과정 canonical 키 (한국어, 시트 저장 및 매칭 기준) =====
+  var courseOptionKeys = ["개인택시양수교육","신규버스양성교육","화물자격교육","택시경력자교육","일반기본교육","일반심화교육","버스기본교육","버스심화교육","화물기본교육","택시법정교육","버스법정교육","버스자격교육"];
+
+  // ===== 문항 (채점 데이터, 언어 무관) =====
   var questions = [
-    { q:"신호등이 막 노란불로 바뀌었다. 교차로까지는 애매한 거리. 나는?", opts:[
-      { t:"속도를 줄이며 정지선 앞에 멈춰 선다", s:{safe:3} },
-      { t:"애매하면 흐름을 보고 통과하는 편이다", s:{reckless:2,racer:3}, blockSafe:true },
-      { t:"멈추기 애매하니 속도를 올려 빠져나간다", s:{reckless:5}, blockSafe:true },
-      { t:"순간 판단이 늦어 일단 그대로 진입한다", s:{fatigue:4}, blockSafe:true }
-    ]},
-    { q:"앞차가 규정 속도보다 느리게 가서 답답하다. 나는?", opts:[
-      { t:"내 페이스를 늦추고 거리를 두며 따라간다", s:{safe:3} },
-      { t:"답답하지만 표시는 안 내고 따라간다", s:{reckless:2} },
-      { t:"바짝 붙거나 상향등으로 신호를 준다", s:{reckless:6}, blockSafe:true },
-      { t:"틈이 보이면 차선을 바꿔 추월한다", s:{racer:4,reckless:3}, blockSafe:true }
-    ]},
-    { q:"뻥 뚫린 고속도로, 주변에 차도 거의 없다. 내 속도계는?", opts:[
-      { t:"한산해도 제한속도 근처를 유지한다", s:{safe:3} },
-      { t:"이럴 땐 제한속도보다 조금 더 밟는다", s:{overconf:3,racer:2}, blockSafe:true },
-      { t:"앞뒤 차 흐름에 맞춰 적당히 달린다", s:{lawless:3} },
-      { t:"뚫린 길은 시원하게 밟아주는 맛이 있다", s:{racer:4}, blockSafe:true }
-    ]},
-    { q:"장거리 운전 중 눈꺼풀이 무거워진다. 목적지는 30분 거리. 나는?", opts:[
-      { t:"무리 말고 가까운 휴게소에 들러 쉰다", s:{safe:3} },
-      { t:"창문 열고 음악 키우며 정신을 차린다", s:{fatigue:3}, blockSafe:true },
-      { t:"30분 거리면 그냥 끝까지 가는 편이다", s:{fatigue:4}, blockSafe:true },
-      { t:"카페인 음료로 졸음을 쫓으며 간다", s:{fatigue:3}, blockSafe:true }
-    ]},
-    { q:"갑자기 비가 쏟아져 노면이 미끄럽다. 내 운전은?", opts:[
-      { t:"속도를 확 줄이고 차간거리를 넓힌다", s:{safe:3} },
-      { t:"평소보다 조금 더 신경 쓰며 간다", s:{overconf:3} },
-      { t:"내 운전 스타일은 크게 바뀌지 않는다", s:{lawless:3}, blockSafe:true },
-      { t:"빗길 주행이 은근 긴장감 있고 재밌다", s:{racer:5}, blockSafe:true }
-    ]},
-    { q:"잠깐 볼일 보러 들렀는데 주차할 곳이 마땅치 않다. 나는?", opts:[
-      { t:"시간이 걸려도 정식 주차구역을 찾는다", s:{safe:3} },
-      { t:"잠깐인데 괜찮겠지 하고 가까이 세운다", s:{lawless:3}, blockSafe:true },
-      { t:"비상등 켜두고 금방 다녀온다", s:{lawless:3}, blockSafe:true },
-      { t:"단속되면 그때 가서 처리하면 된다", s:{lawless:3}, blockSafe:true }
-    ]},
-    { q:"좁은 교차로에서 상대 차와 동시에 진입하려는 상황. 나는?", opts:[
-      { t:"한 박자 양보하고 상황을 살핀다", s:{safe:3} },
-      { t:"내가 먼저 온 것 같으면 그냥 진입한다", s:{overconf:3}, blockSafe:true },
-      { t:"누가 먼저 가든 크게 신경 쓰지 않는다", s:{safe:2} },
-      { t:"경적으로 내 차례임을 분명히 알린다", s:{reckless:6}, blockSafe:true }
-    ]},
-    { q:"솔직히, 내 운전 실력은 어느 정도라고 생각하나?", opts:[
-      { t:"평범한 수준이라 늘 조심하려 한다", s:{safe:2} },
-      { t:"주변 사람들보다는 좀 낫다고 본다", s:{overconf:3}, blockSafe:true },
-      { t:"웬만해선 사고 안 난다는 자신이 있다", s:{overconf:3}, blockSafe:true },
-      { t:"실력보다 그냥 익숙해서 타는 편이다", s:{lawless:3,fatigue:3}, blockSafe:true }
-    ]},
-    { q:"운전 중 휴대폰 알림이 계속 울린다. 나는?", opts:[
-      { t:"도착할 때까지 아예 확인하지 않는다", s:{safe:3} },
-      { t:"신호 대기 중에만 짧게 확인한다", s:{overconf:1}, blockSafe:true },
-      { t:"중요한 연락 같으면 운전 중에도 본다", s:{distract:3,lawless:2}, blockSafe:true },
-      { t:"나도 모르게 손이 휴대폰으로 간다", s:{distract:6,lawless:2}, blockSafe:true }
-    ]},
-    { q:"가볍게 한두 잔 했다. 차는 가져왔고 집은 멀지 않다. 나는?", opts:[
-      { t:"무조건 대리나 대중교통을 이용한다", s:{safe:3} },
-      { t:"이 정도면 운전해도 괜찮을 것 같다", s:{lawless:2,overconf:1}, blockSafe:true },
-      { t:"대리 부르기 번거로워 망설여진다", s:{lawless:2}, blockSafe:true },
-      { t:"짧은 거리 정도는 솔직히 한 적 있다", s:{lawless:2}, blockSafe:true }
-    ]},
-    { q:"몇 시간째 운전 중이라 몸이 뻐근하고 집중이 흐트러진다. 나는?", opts:[
-      { t:"무리 말고 충분히 쉬었다가 출발한다", s:{safe:3} },
-      { t:"거의 다 왔으면 그냥 끝까지 간다", s:{fatigue:3}, blockSafe:true },
-      { t:"스트레칭이나 커피로 버티며 간다", s:{fatigue:3}, blockSafe:true },
-      { t:"이 정도 피로는 잘 못 느끼는 편이다", s:{overconf:1}, blockSafe:true }
-    ]},
-    { q:"운전 중 옆 사람과 대화하거나 내비를 조작할 때, 나는?", opts:[
-      { t:"전방을 우선하고 곁눈질로만 처리한다", s:{safe:3} },
-      { t:"가끔 앞 상황을 놓칠 때가 있다", s:{distract:3}, blockSafe:true },
-      { t:"집중하다 깜짝 놀란 적이 종종 있다", s:{distract:4}, blockSafe:true },
-      { t:"다른 데 신경 쓰면 앞이 잘 안 들어온다", s:{distract:6,fatigue:2}, blockSafe:true }
-    ]},
-    { q:"막히는 도심 도로, 앞차와의 거리. 나는?", opts:[
-      { t:"답답해도 안전거리를 지키려 한다", s:{safe:3} },
-      { t:"흐름상 어쩔 수 없이 좁혀지곤 한다", s:{overconf:3}, blockSafe:true },
-      { t:"거리는 딱히 의식하지 않고 간다", s:{distract:4,fatigue:2}, blockSafe:true },
-      { t:"바짝 붙어야 끼어들기를 막을 수 있다", s:{racer:4,reckless:3}, blockSafe:true }
-    ]},
-    { q:"잠깐 가까운 거리만 이동할 때, 안전벨트와 운전자세는?", opts:[
-      { t:"거리에 상관없이 벨트와 바른 자세를 갖춘다", s:{safe:3} },
-      { t:"가까운 거리면 가끔 벨트를 생략하기도 한다", s:{overconf:2}, blockSafe:true },
-      { t:"편한 자세가 우선이라 자세는 신경 안 쓴다", s:{distract:4,fatigue:2}, blockSafe:true },
-      { t:"답답해서 벨트는 잘 안 매는 편이다", s:{lawless:4}, blockSafe:true }
-    ]}
+    { opts:[ {s:{safe:3}}, {s:{reckless:2,racer:3},blockSafe:true}, {s:{reckless:5},blockSafe:true}, {s:{fatigue:4},blockSafe:true} ] },
+    { opts:[ {s:{safe:3}}, {s:{reckless:2}}, {s:{reckless:6},blockSafe:true}, {s:{racer:4,reckless:3},blockSafe:true} ] },
+    { opts:[ {s:{safe:3}}, {s:{overconf:3,racer:2},blockSafe:true}, {s:{lawless:3}}, {s:{racer:4},blockSafe:true} ] },
+    { opts:[ {s:{safe:3}}, {s:{fatigue:3},blockSafe:true}, {s:{fatigue:4},blockSafe:true}, {s:{fatigue:3},blockSafe:true} ] },
+    { opts:[ {s:{safe:3}}, {s:{overconf:3}}, {s:{lawless:3},blockSafe:true}, {s:{racer:5},blockSafe:true} ] },
+    { opts:[ {s:{safe:3}}, {s:{lawless:3},blockSafe:true}, {s:{lawless:3},blockSafe:true}, {s:{lawless:3},blockSafe:true} ] },
+    { opts:[ {s:{safe:3}}, {s:{overconf:3},blockSafe:true}, {s:{safe:2}}, {s:{reckless:6},blockSafe:true} ] },
+    { opts:[ {s:{safe:2}}, {s:{overconf:3},blockSafe:true}, {s:{overconf:3},blockSafe:true}, {s:{lawless:3,fatigue:3},blockSafe:true} ] },
+    { opts:[ {s:{safe:3}}, {s:{overconf:1},blockSafe:true}, {s:{distract:3,lawless:2},blockSafe:true}, {s:{distract:6,lawless:2},blockSafe:true} ] },
+    { opts:[ {s:{safe:3}}, {s:{lawless:2,overconf:1},blockSafe:true}, {s:{lawless:2},blockSafe:true}, {s:{lawless:2},blockSafe:true} ] },
+    { opts:[ {s:{safe:3}}, {s:{fatigue:3},blockSafe:true}, {s:{fatigue:3},blockSafe:true}, {s:{overconf:1},blockSafe:true} ] },
+    { opts:[ {s:{safe:3}}, {s:{distract:3},blockSafe:true}, {s:{distract:4},blockSafe:true}, {s:{distract:6,fatigue:2},blockSafe:true} ] },
+    { opts:[ {s:{safe:3}}, {s:{overconf:3},blockSafe:true}, {s:{distract:4,fatigue:2},blockSafe:true}, {s:{racer:4,reckless:3},blockSafe:true} ] },
+    { opts:[ {s:{safe:3}}, {s:{overconf:2},blockSafe:true}, {s:{distract:4,fatigue:2},blockSafe:true}, {s:{lawless:4},blockSafe:true} ] }
   ];
+
+  // ===== 다국어 텍스트 =====
+  var i18n = {
+    ko: {
+      badge:"한국교통안전공단 X AI", sub:"나의 운전 유형을 알아보세요",
+      desc:"14가지 상황별 질문을 통해<br>AI가 당신의 운전 성향을 정밀 분석합니다",
+      courseLabel:"📋 수강 중인 교육과정을 선택해주세요", coursePlaceholder:"-- 교육과정 선택 --",
+      courseNames:["개인택시양수교육","신규버스양성교육","화물자격교육","택시경력자교육","일반기본교육","일반심화교육","버스기본교육","버스심화교육","화물기본교육","택시법정교육","버스법정교육","버스자격교육"],
+      eduLabel:"🔢 교육번호를 입력해주세요", startDisabled:"교육과정과 교육번호를 선택·입력해주세요", startReady:"테스트 시작하기 →",
+      notice:"본 테스트는 교육 목적으로 제작되었습니다", footer:"한국교통안전공단 상주교통안전체험교육센터<br>이도연 교수 제작",
+      errCourse:"⚠️ 교육과정을 선택해주세요.", errEdu:"⚠️ 교육번호를 입력해주세요.",
+      demoLabel:"추가 정보", demoStep:"마지막 단계", demoIntro:"정확한 분석을 위해 몇 가지만 더 알려주세요",
+      ageQ:"현재 나이는 어떻게 되십니까?", ageOptions:["20대","30대","40대","50대","60대 이상"],
+      genderQ:"귀하의 성별은 무엇입니까?", genderOptions:["남자","여자"],
+      careerQ:"귀하의 운전 경력은 어떻게 되십니까?", yearUnit:"년", monthUnit:"개월",
+      errAge:"⚠️ 연령대를 선택해주세요.", errGender:"⚠️ 성별을 선택해주세요.", errCareer:"⚠️ 운전 경력을 입력해주세요.",
+      demoNext:"결과 확인하기 →",
+      loadingTitle:"AI 분석 중...", loadingSub:"응답 데이터를 처리하고 있습니다",
+      steps:["답변 데이터 수집 완료","운전 성향 패턴 분석 중","유형 매칭 알고리즘 실행 중","결과 생성 완료"],
+      descHeading:"📋 유형 설명", traitsHeading:"⚠️ 주요 특성", coursesHeading:"🏫 추천 체험교육 코스",
+      videoSuffix:" 미리보기", videoPreparing:"영상 준비 중입니다", imgPreparing:"🖼️ 이미지 준비 중",
+      retryBtn:"🔄 다시 테스트하기", shareBtn:"📤 결과 공유하기", shareTitle:"TS CARBTI - 나의 운전 유형은?",
+      shareText:function(name){ return '나의 운전 유형은 "'+name+'"입니다!\n당신의 운전 유형은 무엇인가요?\n👇 지금 바로 확인해보세요\n'+SITE_URL; },
+      questions:[
+        { q:"신호등이 막 노란불로 바뀌었다. 교차로까지는 애매한 거리. 나는?", opts:["속도를 줄이며 정지선 앞에 멈춰 선다","애매하면 흐름을 보고 통과하는 편이다","멈추기 애매하니 속도를 올려 빠져나간다","순간 판단이 늦어 일단 그대로 진입한다"] },
+        { q:"앞차가 규정 속도보다 느리게 가서 답답하다. 나는?", opts:["내 페이스를 늦추고 거리를 두며 따라간다","답답하지만 표시는 안 내고 따라간다","바짝 붙거나 상향등으로 신호를 준다","틈이 보이면 차선을 바꿔 추월한다"] },
+        { q:"뻥 뚫린 고속도로, 주변에 차도 거의 없다. 내 속도계는?", opts:["한산해도 제한속도 근처를 유지한다","이럴 땐 제한속도보다 조금 더 밟는다","앞뒤 차 흐름에 맞춰 적당히 달린다","뚫린 길은 시원하게 밟아주는 맛이 있다"] },
+        { q:"장거리 운전 중 눈꺼풀이 무거워진다. 목적지는 30분 거리. 나는?", opts:["무리 말고 가까운 휴게소에 들러 쉰다","창문 열고 음악 키우며 정신을 차린다","30분 거리면 그냥 끝까지 가는 편이다","카페인 음료로 졸음을 쫓으며 간다"] },
+        { q:"갑자기 비가 쏟아져 노면이 미끄럽다. 내 운전은?", opts:["속도를 확 줄이고 차간거리를 넓힌다","평소보다 조금 더 신경 쓰며 간다","내 운전 스타일은 크게 바뀌지 않는다","빗길 주행이 은근 긴장감 있고 재밌다"] },
+        { q:"잠깐 볼일 보러 들렀는데 주차할 곳이 마땅치 않다. 나는?", opts:["시간이 걸려도 정식 주차구역을 찾는다","잠깐인데 괜찮겠지 하고 가까이 세운다","비상등 켜두고 금방 다녀온다","단속되면 그때 가서 처리하면 된다"] },
+        { q:"좁은 교차로에서 상대 차와 동시에 진입하려는 상황. 나는?", opts:["한 박자 양보하고 상황을 살핀다","내가 먼저 온 것 같으면 그냥 진입한다","누가 먼저 가든 크게 신경 쓰지 않는다","경적으로 내 차례임을 분명히 알린다"] },
+        { q:"솔직히, 내 운전 실력은 어느 정도라고 생각하나?", opts:["평범한 수준이라 늘 조심하려 한다","주변 사람들보다는 좀 낫다고 본다","웬만해선 사고 안 난다는 자신이 있다","실력보다 그냥 익숙해서 타는 편이다"] },
+        { q:"운전 중 휴대폰 알림이 계속 울린다. 나는?", opts:["도착할 때까지 아예 확인하지 않는다","신호 대기 중에만 짧게 확인한다","중요한 연락 같으면 운전 중에도 본다","나도 모르게 손이 휴대폰으로 간다"] },
+        { q:"가볍게 한두 잔 했다. 차는 가져왔고 집은 멀지 않다. 나는?", opts:["무조건 대리나 대중교통을 이용한다","이 정도면 운전해도 괜찮을 것 같다","대리 부르기 번거로워 망설여진다","짧은 거리 정도는 솔직히 한 적 있다"] },
+        { q:"몇 시간째 운전 중이라 몸이 뻐근하고 집중이 흐트러진다. 나는?", opts:["무리 말고 충분히 쉬었다가 출발한다","거의 다 왔으면 그냥 끝까지 간다","스트레칭이나 커피로 버티며 간다","이 정도 피로는 잘 못 느끼는 편이다"] },
+        { q:"운전 중 옆 사람과 대화하거나 내비를 조작할 때, 나는?", opts:["전방을 우선하고 곁눈질로만 처리한다","가끔 앞 상황을 놓칠 때가 있다","집중하다 깜짝 놀란 적이 종종 있다","다른 데 신경 쓰면 앞이 잘 안 들어온다"] },
+        { q:"막히는 도심 도로, 앞차와의 거리. 나는?", opts:["답답해도 안전거리를 지키려 한다","흐름상 어쩔 수 없이 좁혀지곤 한다","거리는 딱히 의식하지 않고 간다","바짝 붙어야 끼어들기를 막을 수 있다"] },
+        { q:"잠깐 가까운 거리만 이동할 때, 안전벨트와 운전자세는?", opts:["거리에 상관없이 벨트와 바른 자세를 갖춘다","가까운 거리면 가끔 벨트를 생략하기도 한다","편한 자세가 우선이라 자세는 신경 안 쓴다","답답해서 벨트는 잘 안 매는 편이다"] }
+      ],
+      types:{
+        safe:{name:"모범운전자형",tag:"안전 제일주의",desc:"교통법규를 철저히 준수하며 방어운전을 실천하는 모범적인 운전자입니다. 이미 훌륭한 운전 습관을 갖고 계시지만, 다양한 돌발 상황 대응 능력을 더 키워보세요!",traits:["규칙 준수","방어운전","여유로운 판단","타인 배려"]},
+        reckless:{name:"난폭운전형",tag:"충동성 주의",desc:"스트레스나 감정 상태가 운전에 직접적으로 영향을 미치는 유형입니다. 순간적인 판단이 큰 사고로 이어질 수 있어 긴급 상황 대응 훈련이 꼭 필요합니다.",traits:["감정적 운전","경적 남용","급가속·급정거","공격적 주행"]},
+        overconf:{name:"과신형",tag:"자만심 경고",desc:"운전 실력에 대한 과도한 자신감으로 위험을 과소평가하는 유형입니다. 실제 사고는 실력 부족보다 방심에서 비롯되는 경우가 많습니다.",traits:["근거 없는 자신감","위험 과소평가","안전수칙 경시","과속"]},
+        fatigue:{name:"피로형",tag:"졸음운전 위험",desc:"피로와 졸음 상태에서도 운전을 지속하는 경향이 있는 유형입니다. 졸음운전은 음주운전만큼 위험하며 즉각적인 휴식이 반드시 필요합니다.",traits:["졸음 무시","장거리 과주행","피로 과소평가","집중력 저하"]},
+        lawless:{name:"무법자형",tag:"법규 위반 주의",desc:"교통법규를 가볍게 여기거나 나만 괜찮겠지 하는 안일한 사고방식을 가진 유형입니다. 법규 위반이 얼마나 심각한 결과를 초래하는지 체험이 필요합니다.",traits:["법규 경시","음주운전 위험","불법 주정차","규칙 무시"]},
+        racer:{name:"레이서형",tag:"속도 중독 주의",desc:"속도에 쾌감을 느끼고 고속 주행을 즐기는 유형입니다. 일반 도로와 서킷은 엄연히 다르며 과속은 치명적 사고로 이어질 수 있습니다.",traits:["과속 습관","추월 선호","속도 쾌감","안전거리 미확보"]},
+        distract:{name:"안절부절 운전형",tag:"주의산만 경고",desc:"운전 중 집중력이 부족하고 시선 처리가 불안정한 유형입니다. 전방 주시 태만은 사고의 주요 원인으로, 돌발 상황 대응 능력을 키우는 훈련이 꼭 필요합니다.",traits:["시선 처리 미흡","산만한 운전","전방 주시 태만","집중력 부족"]}
+      },
+      courses:{
+        direction:{name:"방향전환코스",desc:"좁은 공간 진입 후 방향 전환 탈출 체험"},
+        urban:{name:"시가지코스",desc:"실제 도심의 헷갈리는 다양한 상황 체험"},
+        curvebrake:{name:"곡선제동코스",desc:"빗길·눈길 감속·제동 미실시 위험성 체험"},
+        linebrake:{name:"직선제동코스",desc:"긴급제동·사이드브레이크·페달 오조작 방지 체험"},
+        avoid:{name:"위험회피코스",desc:"돌발 위험 회피 연습 및 공주거리 확인"},
+        slalom:{name:"슬라롬코스",desc:"조향 감각과 차폭·차량 감각을 익히는 체험"},
+        belt:{name:"벨트/운전자세",desc:"안전벨트의 중요성 및 올바른 운전자세 체험"},
+        theory:{name:"이론교육",desc:"교통법규·사고사례·자동차 구조 학습"}
+      }
+    },
+    en: {
+      badge:"Korea Transportation Safety Authority × AI", sub:"Discover Your Driver Type",
+      desc:"Through 14 situational questions,<br>AI analyzes your driving tendencies in detail",
+      courseLabel:"📋 Please select your training course", coursePlaceholder:"-- Select training course --",
+      courseNames:["Private Taxi Transfer Training","New Bus Driver Training","Freight Qualification Training","Experienced Taxi Driver Training","General Basic Training","General Advanced Training","Bus Basic Training","Bus Advanced Training","Freight Basic Training","Taxi Legal Training","Bus Legal Training","Bus Qualification Training"],
+      eduLabel:"🔢 Please enter your training ID number", startDisabled:"Please select course and enter ID number", startReady:"Start Test →",
+      notice:"This test was created for educational purposes", footer:"Korea Transportation Safety Authority, Sangju Traffic Safety Experience Center<br>Created by Instructor Lee Do-yeon",
+      errCourse:"⚠️ Please select a training course.", errEdu:"⚠️ Please enter your training ID number.",
+      demoLabel:"Additional Info", demoStep:"Final Step", demoIntro:"A few more details for accurate analysis",
+      ageQ:"What is your age group?", ageOptions:["20s","30s","40s","50s","60s or older"],
+      genderQ:"What is your gender?", genderOptions:["Male","Female"],
+      careerQ:"How long have you been driving?", yearUnit:"yr(s)", monthUnit:"mo(s)",
+      errAge:"⚠️ Please select your age group.", errGender:"⚠️ Please select your gender.", errCareer:"⚠️ Please enter your driving experience.",
+      demoNext:"Show My Result →",
+      loadingTitle:"Analyzing with AI...", loadingSub:"Processing your response data",
+      steps:["Response data collected","Analyzing driving pattern","Matching driver type","Result generated"],
+      descHeading:"📋 Type Description", traitsHeading:"⚠️ Key Traits", coursesHeading:"🏫 Recommended Courses",
+      videoSuffix:" Preview", videoPreparing:"Video coming soon", imgPreparing:"🖼️ Image coming soon",
+      retryBtn:"🔄 Take Test Again", shareBtn:"📤 Share Result", shareTitle:"TS CARBTI - What's My Driver Type?",
+      shareText:function(name){ return 'My driver type is "'+name+'"!\nWhat about you?\n👇 Check it out now\n'+SITE_URL; },
+      questions:[
+        { q:"The light just turned yellow. The intersection is at an awkward distance. You:", opts:["Slow down and stop before the stop line","If it's borderline, you go with the flow and pass through","Since stopping is awkward, you speed up and get through","Your reaction is delayed, so you just enter as you are"] },
+        { q:"The car ahead is going slower than the speed limit, and it's frustrating. You:", opts:["Ease off your pace and keep your distance while following","It's frustrating, but you don't show it and just follow","You tailgate or flash your high beams","If there's a gap, you change lanes and overtake"] },
+        { q:"An empty highway, barely any other cars around. Your speedometer:", opts:["You stay near the speed limit even when it's empty","At times like this, you go a little over the limit","You drive at a moderate pace matching the flow of traffic","An open road is meant to be enjoyed at full speed"] },
+        { q:"Your eyelids are getting heavy during a long drive. Your destination is 30 minutes away. You:", opts:["Don't push it — stop at a nearby rest area to rest","Open the window and turn up the music to stay alert","Since it's only 30 minutes, you just keep going","You fight off the drowsiness with a caffeine drink"] },
+        { q:"It suddenly starts pouring and the road is slippery. Your driving:", opts:["Slow down significantly and widen the following distance","Pay a bit more attention than usual","Your driving style doesn't really change","Driving in the rain is kind of thrilling and fun"] },
+        { q:"You stopped for a quick errand and there's no proper parking spot. You:", opts:["Take the time to find a proper parking space","Park nearby, figuring it'll be fine since it's quick","Turn on your hazard lights and run in and out quickly","Figure you'll deal with it if you get caught"] },
+        { q:"At a narrow intersection, another car is about to enter at the same time as you. You:", opts:["Yield for a moment and assess the situation","If you think you arrived first, you just go ahead","You don't really care who goes first","You honk to clearly assert your turn"] },
+        { q:"Honestly, how would you rate your own driving skill?", opts:["About average — I always try to be careful","A bit better than most people around me","I'm confident enough that I won't get into an accident","I don't think about skill much, I just drive out of habit"] },
+        { q:"Your phone keeps buzzing with notifications while driving. You:", opts:["Don't check it at all until you arrive","Only glance at it briefly while stopped at a light","Check it while driving if it seems like an important call","Your hand goes to the phone without even realizing it"] },
+        { q:"You've had a couple of light drinks. Your car is there and home isn't far. You:", opts:["Definitely take a designated driver or public transit","Think you're probably fine to drive at this level","Hesitate because calling a designated driver feels like a hassle","Honestly, you've driven a short distance like this before"] },
+        { q:"You've been driving for hours and your body is stiff, focus slipping. You:", opts:["Don't push through — rest properly before continuing","If you're almost there, you just keep going","Push through with stretching or coffee","You rarely feel this kind of fatigue"] },
+        { q:"While chatting with a passenger or adjusting the navigation while driving, you:", opts:["Prioritize the road ahead, only glancing sideways","Sometimes miss what's happening up ahead","Have been startled after losing focus more than once","When distracted, the road ahead barely registers"] },
+        { q:"Heavy city traffic — your distance from the car ahead. You:", opts:["Try to keep a safe distance even if it's frustrating","It narrows sometimes just because of the flow","You don't really pay attention to the distance","You stay close to block others from cutting in"] },
+        { q:"For a short nearby trip, your seatbelt and driving posture:", opts:["You always buckle up and sit properly, no matter the distance","For short trips, you sometimes skip the seatbelt","Comfort comes first, so posture isn't really a concern","It feels restrictive, so you rarely wear the seatbelt"] }
+      ],
+      types:{
+        safe:{name:"Model Driver",tag:"Safety First",desc:"A model driver who strictly follows traffic laws and practices defensive driving. You already have great habits — let's build up your ability to handle unexpected situations even further!",traits:["Rule-abiding","Defensive driving","Calm judgment","Considerate of others"]},
+        reckless:{name:"Aggressive Driver",tag:"Impulse Caution",desc:"A type whose driving is directly affected by stress or emotions. A split-second reaction can lead to a serious accident, so training in handling emergency situations is essential.",traits:["Emotional driving","Excessive horn use","Sudden acceleration/braking","Aggressive driving"]},
+        overconf:{name:"Overconfident Driver",tag:"Overconfidence Alert",desc:"A type that underestimates risk due to excessive confidence in driving skill. Most accidents come from carelessness rather than lack of skill.",traits:["Unfounded confidence","Underestimating risk","Disregarding safety rules","Speeding"]},
+        fatigue:{name:"Fatigued Driver",tag:"Drowsy Driving Risk",desc:"A type that continues driving even while tired or drowsy. Drowsy driving is as dangerous as drunk driving, and immediate rest is essential.",traits:["Ignoring drowsiness","Overextended trips","Underestimating fatigue","Reduced concentration"]},
+        lawless:{name:"Rule-breaking Driver",tag:"Violation Caution",desc:"A type that takes traffic laws lightly or assumes it'll be fine. Hands-on experience with the serious consequences of violations is needed.",traits:["Disregard for rules","Drunk driving risk","Illegal parking","Ignoring regulations"]},
+        racer:{name:"Speed Racer",tag:"Speed Addiction Alert",desc:"A type who enjoys the thrill of speed and high-speed driving. Public roads are not a racetrack, and speeding can lead to fatal accidents.",traits:["Habitual speeding","Frequent overtaking","Thrill-seeking","Insufficient following distance"]},
+        distract:{name:"Distracted Driver",tag:"Inattention Alert",desc:"A type with low concentration and unstable gaze control while driving. Failing to watch the road ahead is a leading cause of accidents.",traits:["Poor gaze control","Distracted driving","Inattention to the road","Lack of focus"]}
+      },
+      courses:{
+        direction:{name:"U-turn Course",desc:"Practice entering a narrow space and safely exiting after turning around"},
+        urban:{name:"Urban Course",desc:"Experience various confusing real-world city driving situations"},
+        curvebrake:{name:"Curved Braking Course",desc:"Experience the dangers of not slowing down or braking on wet/icy curves"},
+        linebrake:{name:"Straight Braking Course",desc:"Practice emergency braking, parking brake use, and pedal misapplication prevention"},
+        avoid:{name:"Hazard Avoidance Course",desc:"Practice avoiding sudden hazards and check your own stopping distance"},
+        slalom:{name:"Slalom Course",desc:"Build steering sense and awareness of your vehicle's width and length"},
+        belt:{name:"Seatbelt/Posture Course",desc:"Experience the importance of seatbelts and proper driving posture"},
+        theory:{name:"Classroom Theory",desc:"Learn traffic laws, accident case studies, and vehicle structure"}
+      }
+    },
+    zh: {
+      badge:"韩国交通安全公团 × AI", sub:"了解您的驾驶类型",
+      desc:"通过14道情景问题<br>AI将精细分析您的驾驶倾向",
+      courseLabel:"📋 请选择您所参加的培训课程", coursePlaceholder:"-- 请选择培训课程 --",
+      courseNames:["个人出租车受让培训","新任大巴司机培训","货运资格培训","出租车老司机培训","普通基础培训","普通深化培训","大巴基础培训","大巴深化培训","货运基础培训","出租车法定培训","大巴法定培训","大巴资格培训"],
+      eduLabel:"🔢 请输入您的培训编号", startDisabled:"请选择培训课程并输入培训编号", startReady:"开始测试 →",
+      notice:"本测试为教育目的而制作", footer:"韩国交通安全公团 尚州交通安全体验教育中心<br>李度渊 教官 制作",
+      errCourse:"⚠️ 请选择培训课程。", errEdu:"⚠️ 请输入培训编号。",
+      demoLabel:"补充信息", demoStep:"最后一步", demoIntro:"为了更精确的分析，请再告诉我们几项信息",
+      ageQ:"您现在的年龄是？", ageOptions:["20多岁","30多岁","40多岁","50多岁","60岁以上"],
+      genderQ:"您的性别是？", genderOptions:["男","女"],
+      careerQ:"您的驾龄是多久？", yearUnit:"年", monthUnit:"个月",
+      errAge:"⚠️ 请选择年龄段。", errGender:"⚠️ 请选择性别。", errCareer:"⚠️ 请填写驾龄。",
+      demoNext:"查看结果 →",
+      loadingTitle:"AI分析中...", loadingSub:"正在处理您的回答数据",
+      steps:["回答数据收集完成","分析驾驶倾向模式中","执行类型匹配算法中","结果生成完成"],
+      descHeading:"📋 类型说明", traitsHeading:"⚠️ 主要特征", coursesHeading:"🏫 推荐体验培训课程",
+      videoSuffix:" 预览", videoPreparing:"视频准备中", imgPreparing:"🖼️ 图片准备中",
+      retryBtn:"🔄 重新测试", shareBtn:"📤 分享结果", shareTitle:"TS CARBTI - 我的驾驶类型是？",
+      shareText:function(name){ return '我的驾驶类型是"'+name+'"！\n你的驾驶类型是什么呢？\n👇 快来测一测吧\n'+SITE_URL; },
+      questions:[
+        { q:"红绿灯刚变成黄灯，距离路口有点尴尬。此时你会：", opts:["减速并停在停止线前","如果比较模糊，就看情况跟着车流通过","觉得停车尴尬，于是加速冲过去","反应慢了一拍，就直接闯了过去"] },
+        { q:"前车比限速慢很多，让人很着急。此时你会：", opts:["放慢自己的节奏，保持车距跟车","虽然着急，但不表现出来，继续跟车","贴得很近或用远光灯示意","一有空隙就变道超车"] },
+        { q:"高速公路很空旷，几乎没有其他车辆。你的车速：", opts:["即使空旷也保持在限速附近","这种时候会稍微超一点限速","根据前后车流适当调整车速","畅通的道路就该痛快地开快点"] },
+        { q:"长途驾驶中眼皮开始发沉，目的地还有30分钟车程。此时你会：", opts:["不勉强，找就近的休息站休息一下","开窗、调大音乐来提神","反正就30分钟，干脆直接开到底","靠含咖啡因的饮料硬撑"] },
+        { q:"突然下起大雨，路面很滑。你的驾驶方式：", opts:["大幅减速并拉开车距","比平时稍微多加些注意","驾驶风格基本不会改变","雨中驾驶反而有种刺激感，挺好玩"] },
+        { q:"临时有事下车，却找不到合适的停车位。此时你会：", opts:["哪怕多花时间也要找正规停车位","觉得就一会儿，随便靠边停一下","打开双闪，很快办完事就回来","就算被贴罚单，到时候再处理"] },
+        { q:"在狭窄的路口，对面车辆和你同时想进入。此时你会：", opts:["稍作礼让，观察一下情况","觉得自己先到，就直接开过去","谁先谁后都无所谓","按喇叭明确表示这是自己的路权"] },
+        { q:"说实话，你觉得自己的驾驶技术怎么样？", opts:["就是普通水平，一直很小心","比周围人开得稍微好一些","很有自信，觉得自己不会出事","没怎么想过技术问题，开习惯了而已"] },
+        { q:"开车时手机通知一直响。此时你会：", opts:["到达目的地前完全不看","只有等红灯时才瞄一眼","如果像是重要电话，开车时也会看","手会不自觉地伸向手机"] },
+        { q:"微微喝了一两杯酒，车就在身边，家也不远。此时你会：", opts:["无条件叫代驾或坐公共交通","觉得这种程度开车应该没问题","叫代驾嫌麻烦，有点犹豫","老实说，短距离这样开过几次"] },
+        { q:"已经开了好几个小时，身体发僵，注意力也开始涣散。此时你会：", opts:["不勉强，充分休息后再出发","如果快到了，就直接开到底","靠拉伸或咖啡硬撑着开","这种程度的疲劳自己不太容易察觉"] },
+        { q:"开车时和旁边的人聊天，或者操作导航时，你：", opts:["以前方路况为主，只是偶尔瞟一眼","偶尔会没注意到前方情况","好几次因为分心而被吓一跳","一旦分心，前方基本就看不太清了"] },
+        { q:"拥堵的市区道路上，与前车的距离，你：", opts:["再着急也尽量保持安全距离","因为车流原因难免会缩短车距","基本不太在意车距","要贴近一点才能防止别人加塞"] },
+        { q:"只是短距离移动时，你的安全带和驾驶姿势：", opts:["不论距离长短都会系好安全带、坐姿端正","距离近的话有时会省略安全带","姿势舒服最重要，不太在意坐姿","觉得系安全带很闷，基本不怎么系"] }
+      ],
+      types:{
+        safe:{name:"模范驾驶型",tag:"安全第一",desc:"严格遵守交通法规、践行防御性驾驶的模范驾驶员。您已经拥有出色的驾驶习惯，现在再来提升应对突发状况的能力吧！",traits:["遵守规则","防御性驾驶","从容判断","体谅他人"]},
+        reckless:{name:"急躁驾驶型",tag:"冲动倾向提醒",desc:"压力或情绪状态会直接影响驾驶的类型。瞬间的判断失误可能导致严重事故，因此非常需要应对紧急状况的培训。",traits:["情绪化驾驶","滥用喇叭","急加速急刹车","攻击性驾驶"]},
+        overconf:{name:"过度自信型",tag:"自满警示",desc:"因过度自信而低估风险的类型。实际事故大多源于疏忽大意，而非驾驶技术不足。",traits:["盲目自信","低估风险","轻视安全守则","超速"]},
+        fatigue:{name:"疲劳驾驶型",tag:"瞌睡驾驶风险",desc:"即使在疲惫困倦状态下仍继续驾驶的类型。疲劳驾驶和酒后驾驶一样危险，必须立即休息。",traits:["忽视困意","长途连续驾驶","低估疲劳程度","注意力下降"]},
+        lawless:{name:"违规驾驶型",tag:"违反法规提醒",desc:"轻视交通法规、抱有'我应该没事'心态的类型。需要亲身体验违规行为可能带来的严重后果。",traits:["轻视规则","酒驾风险","违规停车","无视规定"]},
+        racer:{name:"竞速型",tag:"速度成瘾警示",desc:"享受速度快感、喜欢高速行驶的类型。普通道路和赛道截然不同，超速可能导致致命事故。",traits:["超速习惯","偏好超车","追求速度快感","未保持安全车距"]},
+        distract:{name:"分心驾驶型",tag:"注意力涣散警示",desc:"驾驶时注意力不集中、视线处理不稳定的类型。前方注意力不足是事故的主要原因，非常需要应对突发状况的培训。",traits:["视线处理不当","驾驶时分心","前方注意力不足","专注力不足"]}
+      },
+      courses:{
+        direction:{name:"掉头课程",desc:"体验进入狭窄空间后掉头驶出的过程"},
+        urban:{name:"市区课程",desc:"体验各种容易混淆的真实市区驾驶状况"},
+        curvebrake:{name:"弯道制动课程",desc:"体验雨雪天弯道未减速制动的危险性"},
+        linebrake:{name:"直线制动课程",desc:"体验紧急制动、手刹使用及踏板误踩防止装置"},
+        avoid:{name:"危险规避课程",desc:"练习规避突发危险，确认自身反应距离"},
+        slalom:{name:"S型弯道课程",desc:"熟悉转向感觉及车宽车长感"},
+        belt:{name:"安全带/驾驶姿势课程",desc:"体验安全带的重要性及正确的驾驶姿势"},
+        theory:{name:"理论教育",desc:"学习交通法规、事故案例及汽车构造"}
+      }
+    }
+  };
 
   // safe(모범운전자) 이론상 최고 점수 자동 계산
   var SAFE_MAX = 0;
@@ -350,15 +441,18 @@
   }
 
   // ===== 상태 =====
-  var selectedCourse = "";
+  var currentLang = "ko";
+  var selectedCourseIdx = -1;
   var current = 0;
   var scores = {};
   var answers = [];
   var safeBlocked = false;
   var locked = false;
-  var ageVal = "";
-  var genderVal = "";
+  var ageIdx = -1;
+  var genderIdx = -1;
   var careerText = "";
+
+  function T() { return i18n[currentLang]; }
 
   function show(id) {
     var arr = document.querySelectorAll(".screen");
@@ -377,39 +471,105 @@
   }
 
   function courseScore(courseKey) {
-    var c = courseInfo[courseKey];
+    var rel = courseRelate[courseKey];
     var total = 0;
-    for (var i=0;i<c.relate.length;i++) {
-      var rk = c.relate[i];
+    for (var i=0;i<rel.length;i++) {
+      var rk = rel[i];
       if (scores.hasOwnProperty(rk)) total += scores[rk];
     }
     return total;
   }
 
-  function sortCoursesByScore(courseKeys) {
-    var arr = courseKeys.slice();
+  function sortCoursesByScore(keys) {
+    var arr = keys.slice();
     arr.sort(function(a,b){ return courseScore(b) - courseScore(a); });
     return arr;
   }
 
+  // ===== 언어 적용 =====
+  function buildCourseSelect() {
+    var sel = document.getElementById("courseSelect");
+    var t = T();
+    var prevIdx = selectedCourseIdx;
+    sel.innerHTML = "";
+    var ph = document.createElement("option");
+    ph.value = ""; ph.disabled = true; ph.selected = (prevIdx === -1);
+    ph.textContent = t.coursePlaceholder;
+    sel.appendChild(ph);
+    for (var i=0;i<courseOptionKeys.length;i++) {
+      var op = document.createElement("option");
+      op.value = String(i);
+      op.textContent = t.courseNames[i];
+      if (i === prevIdx) op.selected = true;
+      sel.appendChild(op);
+    }
+  }
+
+  function applyLanguage(lang) {
+    currentLang = lang;
+    var t = T();
+    document.querySelectorAll(".lang-btn").forEach(function(b){
+      b.classList.toggle("active", b.getAttribute("data-lang") === lang);
+    });
+    document.getElementById("txtBadge").textContent = t.badge;
+    document.getElementById("txtSub").textContent = t.sub;
+    document.getElementById("txtDesc").innerHTML = t.desc;
+    document.getElementById("txtCourseLabel").textContent = t.courseLabel;
+    document.getElementById("txtEduLabel").textContent = t.eduLabel;
+    document.getElementById("txtNotice").textContent = t.notice;
+    document.getElementById("txtFooter").innerHTML = t.footer;
+    buildCourseSelect();
+    checkReady();
+
+    document.getElementById("txtDemoLabel").textContent = t.demoLabel;
+    document.getElementById("txtDemoStep").textContent = t.demoStep;
+    document.getElementById("txtDemoIntro").textContent = t.demoIntro;
+    document.getElementById("txtAgeQ").textContent = t.ageQ;
+    document.getElementById("txtGenderQ").textContent = t.genderQ;
+    document.getElementById("txtCareerQ").textContent = t.careerQ;
+    document.getElementById("txtYearUnit").textContent = t.yearUnit;
+    document.getElementById("txtMonthUnit").textContent = t.monthUnit;
+    document.getElementById("btnDemoNext").textContent = t.demoNext;
+
+    var ageBtns = document.querySelectorAll("#ageGrid .demo-btn");
+    for (var i=0;i<ageBtns.length;i++) ageBtns[i].textContent = t.ageOptions[i];
+    var genderBtns = document.querySelectorAll("#genderGrid .demo-btn");
+    for (var j=0;j<genderBtns.length;j++) genderBtns[j].textContent = t.genderOptions[j];
+
+    document.getElementById("txtLoadingTitle").textContent = t.loadingTitle;
+    document.getElementById("txtLoadingSub").textContent = t.loadingSub;
+    document.getElementById("txtStep1").textContent = t.steps[0];
+    document.getElementById("txtStep2").textContent = t.steps[1];
+    document.getElementById("txtStep3").textContent = t.steps[2];
+    document.getElementById("txtStep4").textContent = t.steps[3];
+
+    document.getElementById("txtDescHeading").textContent = t.descHeading;
+    document.getElementById("txtTraitsHeading").textContent = t.traitsHeading;
+    document.getElementById("txtCoursesHeading").textContent = t.coursesHeading;
+    document.getElementById("btnRetry").textContent = t.retryBtn;
+    document.getElementById("btnShare").textContent = t.shareBtn;
+  }
+
   function checkReady() {
+    var t = T();
     var num = document.getElementById("eduNum").value.trim();
     var btn = document.getElementById("btnStart");
-    if (selectedCourse && num) {
+    if (selectedCourseIdx >= 0 && num) {
       btn.disabled = false;
-      btn.textContent = "테스트 시작하기 →";
+      btn.textContent = t.startReady;
     } else {
       btn.disabled = true;
-      btn.textContent = "교육과정과 교육번호를 선택·입력해주세요";
+      btn.textContent = t.startDisabled;
     }
   }
 
   function tryStart() {
+    var t = T();
     var num = document.getElementById("eduNum").value.trim();
     var err = document.getElementById("intakeError");
     err.textContent = "";
-    if (!selectedCourse) { err.textContent = "⚠️ 교육과정을 선택해주세요."; return; }
-    if (!num) { err.textContent = "⚠️ 교육번호를 입력해주세요."; return; }
+    if (selectedCourseIdx < 0) { err.textContent = t.errCourse; return; }
+    if (!num) { err.textContent = t.errEdu; return; }
     startTest();
   }
 
@@ -425,10 +585,12 @@
 
   function renderQ() {
     locked = false;
-    var q = questions[current];
+    var t = T();
+    var qData = t.questions[current];
+    var qScore = questions[current];
     document.getElementById("qCounter").textContent = (current+1) + " / " + questions.length;
     document.getElementById("qNum").textContent = "Q " + (current+1 < 10 ? "0" : "") + (current+1);
-    document.getElementById("qText").textContent = q.q;
+    document.getElementById("qText").textContent = qData.q;
     document.getElementById("progressFill").style.width = ((current / questions.length) * 100) + "%";
 
     var tb = document.querySelector(".test-body");
@@ -437,13 +599,13 @@
     var box = document.getElementById("options");
     box.innerHTML = "";
 
-    var idxOrder = shuffleArray(q.opts.map(function(o, i){ return i; }));
+    var idxOrder = shuffleArray(qScore.opts.map(function(o, i){ return i; }));
     for (var i=0;i<idxOrder.length;i++) {
       var oi = idxOrder[i];
       var btn = document.createElement("button");
       btn.className = "opt-btn";
       btn.type = "button";
-      btn.textContent = q.opts[oi].t;
+      btn.textContent = qData.opts[oi];
       btn.setAttribute("data-i", String(oi));
       btn.onclick = onOptionClick;
       box.appendChild(btn);
@@ -478,8 +640,8 @@
   }
 
   function showDemo() {
-    ageVal = "";
-    genderVal = "";
+    ageIdx = -1;
+    genderIdx = -1;
     document.querySelectorAll(".demo-btn").forEach(function(b){ b.classList.remove("selected"); });
     document.getElementById("careerYear").value = "";
     document.getElementById("careerMonth").value = "";
@@ -488,13 +650,15 @@
   }
 
   function tryDemoNext() {
+    var t = T();
     var err = document.getElementById("demoError");
     err.textContent = "";
-    if (!ageVal) { err.textContent = "⚠️ 연령대를 선택해주세요."; return; }
-    if (!genderVal) { err.textContent = "⚠️ 성별을 선택해주세요."; return; }
+    if (ageIdx < 0) { err.textContent = t.errAge; return; }
+    if (genderIdx < 0) { err.textContent = t.errGender; return; }
     var y = document.getElementById("careerYear").value;
     var m = document.getElementById("careerMonth").value;
-    if (y === "" && m === "") { err.textContent = "⚠️ 운전 경력을 입력해주세요."; return; }
+    if (y === "" && m === "") { err.textContent = t.errCareer; return; }
+    // 시트 저장용 커리어 텍스트는 항상 한국어 형식으로 고정
     careerText = (y || "0") + "년 " + (m || "0") + "개월";
     runLoading();
   }
@@ -521,7 +685,6 @@
   function showResult() {
     if (safeBlocked) scores.safe = -100;
 
-    // 모범운전자형(safe) 외 나머지 유형 중 최고점 계산
     var otherTopKey = "reckless";
     var otherTopVal = -999999;
     for (var k in scores) {
@@ -532,8 +695,6 @@
       }
     }
 
-    // 모범운전자형은 안전 점수가 이론상 최고점의 95% 이상이면서
-    // 다른 유형 최고점보다도 높을 때만 인정
     var topKey;
     if (!safeBlocked && scores.safe >= SAFE_MAX * 0.95 && scores.safe > otherTopVal) {
       topKey = "safe";
@@ -541,63 +702,75 @@
       topKey = otherTopKey;
     }
 
-    var t = types[topKey];
-    var shuffledCourses = sortCoursesByScore(t.courses);
+    var t = T();
+    var tKo = i18n.ko;
+    var typeDisp = t.types[topKey];
+    var typeKo = tKo.types[topKey];
+    var sortedCourseKeys = sortCoursesByScore(typeCourses[topKey]);
 
-    document.getElementById("rTag").textContent = t.tag;
-    document.getElementById("rEmoji").textContent = t.emoji;
-    document.getElementById("rName").textContent = t.name;
-    document.getElementById("rDesc").textContent = t.desc;
+    document.getElementById("rTag").textContent = typeDisp.tag;
+    document.getElementById("rEmoji").textContent = typeEmoji[topKey];
+    document.getElementById("rName").textContent = typeDisp.name;
+    document.getElementById("rDesc").textContent = typeDisp.desc;
 
     var traitsHtml = "";
-    for (var i=0;i<t.traits.length;i++) {
-      traitsHtml += '<div class="trait-chip">' + t.traits[i] + '</div>';
+    for (var i=0;i<typeDisp.traits.length;i++) {
+      traitsHtml += '<div class="trait-chip">' + typeDisp.traits[i] + '</div>';
     }
     document.getElementById("rTraits").innerHTML = traitsHtml;
 
     var coursesHtml = "";
-    for (var j=0;j<shuffledCourses.length;j++) {
-      var c = courseInfo[shuffledCourses[j]];
+    for (var j=0;j<sortedCourseKeys.length;j++) {
+      var ck = sortedCourseKeys[j];
+      var cDisp = t.courses[ck];
       coursesHtml += '<div class="course-item"><div class="course-num">' + (j+1) +
-        '</div><span><strong>' + c.name + '</strong><br><small style="color:#666;font-size:13px;">' +
-        c.desc + '</small></span></div>';
+        '</div><span><strong>' + cDisp.name + '</strong><br><small style="color:#666;font-size:13px;">' +
+        cDisp.desc + '</small></span></div>';
     }
     document.getElementById("rCourses").innerHTML = coursesHtml;
 
     var imgWrap = document.getElementById("rImgWrap");
-    if (t.img) {
-      imgWrap.innerHTML = '<img src="' + t.img + '" alt="' + t.name +
+    var imgSrc = typeImg[topKey];
+    if (imgSrc) {
+      imgWrap.innerHTML = '<img src="' + imgSrc + '" alt="' + typeDisp.name +
         '" style="width:100%;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,80,0.12);">';
     } else {
-      imgWrap.innerHTML = '<div style="background:#e8eeff;border:2px dashed #99b0e8;border-radius:20px;padding:28px;color:#5570aa;font-size:14px;text-align:center;">🖼️ 이미지 준비 중</div>';
+      imgWrap.innerHTML = '<div style="background:#e8eeff;border:2px dashed #99b0e8;border-radius:20px;padding:28px;color:#5570aa;font-size:14px;text-align:center;">' + t.imgPreparing + '</div>';
     }
 
-    var firstCourse = courseInfo[shuffledCourses[0]];
-    document.getElementById("rVideoTitle").textContent = "📹 " + firstCourse.name + " 미리보기";
+    var firstKey = sortedCourseKeys[0];
+    var firstDisp = t.courses[firstKey];
+    var firstVideo = courseVideo[firstKey];
+    document.getElementById("rVideoTitle").textContent = "📹 " + firstDisp.name + t.videoSuffix;
     var vWrap = document.getElementById("videoWrap");
-    if (firstCourse.video) {
-      vWrap.innerHTML = '<video controls playsinline style="width:100%;border-radius:12px;" src="' + firstCourse.video + '"></video>';
+    if (firstVideo) {
+      vWrap.innerHTML = '<video controls playsinline style="width:100%;border-radius:12px;" src="' + firstVideo + '"></video>';
     } else {
-      vWrap.innerHTML = '<div style="background:#e8eeff;border:2px dashed #99b0e8;border-radius:12px;padding:32px 20px;text-align:center;color:#5570aa;"><div style="font-size:36px;margin-bottom:8px;">🎬</div><div style="font-weight:700;font-size:14px;margin-bottom:4px;">' + firstCourse.name + ' 소개 영상</div><div style="font-size:12px;color:#889;">영상 준비 중입니다</div></div>';
+      vWrap.innerHTML = '<div style="background:#e8eeff;border:2px dashed #99b0e8;border-radius:12px;padding:32px 20px;text-align:center;color:#5570aa;"><div style="font-size:36px;margin-bottom:8px;">🎬</div><div style="font-weight:700;font-size:14px;margin-bottom:4px;">' + firstDisp.name + '</div><div style="font-size:12px;color:#889;">' + t.videoPreparing + '</div></div>';
     }
 
-    saveResult(t.name, t.tag, shuffledCourses);
+    // 시트 저장은 항상 한국어 canonical 값으로 (분석 일관성 유지)
+    var courseNamesKo = sortedCourseKeys.map(function(k){ return tKo.courses[k].name; }).join(" > ");
+    saveResult(typeKo.name, typeKo.tag, courseNamesKo);
     show("result");
   }
 
-  function saveResult(resultName, resultTag, courseKeys) {
+  function saveResult(resultNameKo, resultTagKo, recommendedKo) {
     var eduNum = document.getElementById("eduNum").value.trim();
-    var courseNames = courseKeys.map(function(k){ return courseInfo[k].name; }).join(" > ");
+    var courseNameKo = selectedCourseIdx >= 0 ? courseOptionKeys[selectedCourseIdx] : "";
+    var ageKo = ageIdx >= 0 ? i18n.ko.ageOptions[ageIdx] : "";
+    var genderKo = genderIdx >= 0 ? i18n.ko.genderOptions[genderIdx] : "";
     var payload = {
-      course: selectedCourse,
+      course: courseNameKo,
       eduNum: eduNum,
       answers: answers,
-      age: ageVal,
-      gender: genderVal,
+      age: ageKo,
+      gender: genderKo,
       career: careerText,
-      result: resultName,
-      tag: resultTag,
-      recommended: courseNames
+      result: resultNameKo,
+      tag: resultTagKo,
+      recommended: recommendedKo,
+      lang: currentLang
     };
     fetch(SHEET_URL, {
       method: "POST",
@@ -608,30 +781,37 @@
   }
 
   function restart() {
-    selectedCourse = "";
-    ageVal = "";
-    genderVal = "";
+    selectedCourseIdx = -1;
+    ageIdx = -1;
+    genderIdx = -1;
     careerText = "";
-    document.getElementById("courseSelect").value = "";
     document.getElementById("eduNum").value = "";
     document.getElementById("intakeError").textContent = "";
+    buildCourseSelect();
     checkReady();
     show("main");
   }
 
   function shareResult() {
+    var t = T();
     var name = document.getElementById("rName").textContent;
-    var text = '나의 운전 유형은 "' + name + '"입니다!\n당신의 운전 유형은 무엇인가요?\n👇 지금 바로 확인해보세요\n' + SITE_URL;
+    var text = t.shareText(name);
     if (navigator.share) {
-      navigator.share({ title:"TS CARBTI - 나의 운전 유형은?", text:text, url:SITE_URL });
+      navigator.share({ title:t.shareTitle, text:text, url:SITE_URL });
     } else {
       alert(text);
     }
   }
 
   document.addEventListener("DOMContentLoaded", function(){
+    document.querySelectorAll(".lang-btn").forEach(function(b){
+      b.addEventListener("click", function(){
+        applyLanguage(this.getAttribute("data-lang"));
+      });
+    });
+
     document.getElementById("courseSelect").addEventListener("change", function(){
-      selectedCourse = this.value;
+      selectedCourseIdx = this.value === "" ? -1 : parseInt(this.value, 10);
       checkReady();
     });
     document.getElementById("eduNum").addEventListener("input", checkReady);
@@ -639,21 +819,23 @@
     document.getElementById("btnRetry").addEventListener("click", restart);
     document.getElementById("btnShare").addEventListener("click", shareResult);
 
-    document.querySelectorAll("#ageGrid .demo-btn").forEach(function(b){
+    document.querySelectorAll("#ageGrid .demo-btn").forEach(function(b, idx){
       b.addEventListener("click", function(){
         document.querySelectorAll("#ageGrid .demo-btn").forEach(function(x){ x.classList.remove("selected"); });
         this.classList.add("selected");
-        ageVal = this.getAttribute("data-val");
+        ageIdx = idx;
       });
     });
-    document.querySelectorAll("#genderGrid .demo-btn").forEach(function(b){
+    document.querySelectorAll("#genderGrid .demo-btn").forEach(function(b, idx){
       b.addEventListener("click", function(){
         document.querySelectorAll("#genderGrid .demo-btn").forEach(function(x){ x.classList.remove("selected"); });
         this.classList.add("selected");
-        genderVal = this.getAttribute("data-val");
+        genderIdx = idx;
       });
     });
     document.getElementById("btnDemoNext").addEventListener("click", tryDemoNext);
+
+    applyLanguage("ko");
   });
 
 })();
